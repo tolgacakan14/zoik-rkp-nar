@@ -1,6 +1,6 @@
 'use client';
 import { lazy, Suspense, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
-import { ArrowUpRight, Search, X, Coffee, IceCreamBowl, Utensils, LayoutGrid, List, ChevronRight, ChevronDown, SlidersHorizontal, Check } from 'lucide-react';
+import { ArrowUpRight, Search, X, Coffee, IceCreamBowl, Utensils, LayoutGrid, List, ChevronRight, ChevronDown, Check } from 'lucide-react';
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog-local';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import menu from '@/data/menu.json';
@@ -72,22 +72,32 @@ export default function Home() {
         broken-ring style as the sign, and the cafe name typed on in sequence. */}
     <section className="hero" aria-label="Zoi Kırkpınar">
       <svg className="hero-line-art" viewBox="0 0 440 300" fill="none" aria-hidden="true">
+        <path className="la-line la-roof-ghost" pathLength={1} d="M18,152 L220,53 L422,152" />
         <path className="la-line la-roof" pathLength={1} d="M20,150 L220,55 L420,150" />
+        <path className="la-line la-foliage-back" pathLength={1} d="
+          M40,134 q11,-16 22,-2 q11,-18 22,0 q11,-15 22,3 q11,-19 22,-3
+          q11,-14 22,2 q11,-18 22,-2 q11,-15 22,4 q11,-17 22,-1
+          q11,-14 22,3 q11,-15 22,-4 q11,-12 22,2 q11,-16 22,-3 q11,-13 22,2" />
         <path className="la-line la-foliage" pathLength={1} d="
           M46,128 q12,-22 24,-4 q12,-24 24,-2 q12,-20 24,4 q12,-26 24,-6
           q12,-18 24,2 q12,-24 24,-4 q12,-20 24,6 q12,-22 24,-2
           q12,-18 24,4 q12,-20 24,-6 q12,-16 24,2 q12,-20 24,-4" />
         <path className="la-line la-garland" pathLength={1} d="M25,150 Q220,186 415,150" />
+        <path className="la-line la-sprig" pathLength={1} d="M40,134 q-9,-11 -4,-24" />
+        <path className="la-line la-sprig" pathLength={1} d="M400,134 q9,-11 4,-24" />
+        <ellipse className="la-glow" cx={205} cy={222} rx={132} ry={66} />
         {heroBulbs.map(([x,y,drop],index)=>(
           <g className="la-bulb" style={{'--bulb-delay':`${1.05+index*.05}s`} as CSSProperties} key={index}>
             <path pathLength={1} d={`M${x},${y} L${x},${y+drop}`} />
             <circle cx={x} cy={y+drop+5} r={3.4} />
           </g>
         ))}
-        <path className="la-line la-mark" pathLength={1} d="M150,206 L193,206 L150,255 L195,255" />
-        <path className="la-line la-mark" pathLength={1} d="M248.6,243.9 A30,30 0 1 1 248.6,216.1" />
-        <path className="la-line la-mark" pathLength={1} d="M301,208 L301,255" />
-        <circle className="la-dot" cx={301} cy={196} r={4} />
+        {/* Z, a ring open at the top with a separate floating brow above the
+            gap, and a plain vertical stroke — Turkish capital I has no dot. */}
+        <path className="la-line la-mark" pathLength={1} d="M140,206 L179,206 L140,255 L181,255" />
+        <path className="la-line la-mark" pathLength={1} d="M221.84,206.25 A28,28 0 1 1 192.16,206.25" />
+        <path className="la-line la-mark la-brow" pathLength={1} d="M186,202 Q207,185 228,202" />
+        <path className="la-line la-mark" pathLength={1} d="M255,208 L255,251 Q255,260 264,256" />
       </svg>
       <div className="hero-copy">
         <span className="hero-kicker">CAFE &amp; NARGİLE</span>
@@ -98,17 +108,20 @@ export default function Home() {
         </h1>
         <p className="hero-line">Taş duvarların ve akşam ışıklarının arasında, kendine has bir mola.</p>
       </div>
-      <a className="hero-scroll" href="#menu" aria-label="Menüye in"><ChevronDown size={16}/></a>
     </section>
 
-    <button className="education-banner hero-cta" onClick={()=>{setHookahDetail(false);setEducationOpen(true)}}>
-      <span className="education-copy"><strong>Nargile</strong><span>25 aroma</span></span>
-      <span className="education-action">Oluştur <ArrowUpRight size={17}/></span>
+    <button className="hero-cta" onClick={()=>{setHookahDetail(false);setEducationOpen(true)}}>
+      <span className="hero-cta-text">
+        <strong>Nargileni Oluştur</strong>
+        <small>25 aroma · kendi karışımını tasarla</small>
+      </span>
+      <span className="hero-cta-arrow"><ArrowUpRight size={18}/></span>
     </button>
 
     <div className="sticky-controls">
-      <div className="search-row"><label className="search-input"><Search size={19} strokeWidth={1.6}/><input type="search" aria-label="Menüde ürün ara" placeholder="Kahve, tatlı, sandviç…" value={query} onChange={event=>setQuery(event.target.value)}/>{query&&<button onClick={()=>setQuery('')} aria-label="Aramayı temizle"><X size={17}/></button>}</label><button className="category-launcher" aria-label="Tüm kategoriler" onClick={()=>setCategoriesOpen(true)}><SlidersHorizontal size={20} strokeWidth={1.6}/></button></div>
-      <Tabs value={section} onValueChange={chooseSection} className="section-tabs"><TabsList className="section-list" aria-label="Menü bölümleri">{sections.map(({name,icon:Icon})=><TabsTrigger value={name} key={name} className="section-tab"><Icon size={20} strokeWidth={1.5}/><span>{name}</span></TabsTrigger>)}</TabsList></Tabs>
+      <div className="section-tabs">
+        <Tabs value={section} onValueChange={chooseSection}><TabsList className="section-list" aria-label="Menü bölümleri">{sections.map(({name,icon:Icon})=><TabsTrigger value={name} key={name} className="section-tab"><Icon size={20} strokeWidth={1.5}/><span>{name}</span></TabsTrigger>)}</TabsList></Tabs>
+      </div>
       {!normalized&&<nav className="category-strip" aria-label="Alt kategoriler">{activeSection.categories.map(name=><button key={name} className={name===category?'category-chip selected':'category-chip'} aria-current={name===category?'true':undefined} onClick={()=>chooseCategory(name)}>{name}</button>)}</nav>}
     </div>
     <section id="menu" className="menu-content" aria-label={normalized?'Arama sonuçları':category}>
@@ -135,7 +148,7 @@ export default function Home() {
     <Dialog open={educationOpen} onOpenChange={setEducationOpen}><DialogContent className="education-dialog hookah-builder" showCloseButton={false}>
       <DialogClose className="hookah-close" aria-label="Nargile menüsünü kapat"><X size={19}/></DialogClose>
       <div className={'education-visual '+(hookahLine==='dark'?'dark-visual':'')} style={{'--aroma':focusedAroma?.color||'#6f8980'} as CSSProperties}>
-        <span className="zoi-model-word" aria-hidden="true">ZOI</span>
+        <img className="zoi-model-emblem" src="/logo.webp" alt="" aria-hidden="true" />
         <Suspense fallback={<div className="hookah-loading">Model hazırlanıyor…</div>}><HookahEducation3D accents={selectedAromas.map(flavor=>flavor.color)} darkLine={hookahLine==='dark'} onDetailChange={setHookahDetail}/></Suspense>
         <span className="model-mark">{hookahDetail?'Genel görünüm için dokun':'360° · Detay için dokun'}</span>
       </div>
