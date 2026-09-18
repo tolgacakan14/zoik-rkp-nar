@@ -43,7 +43,7 @@ body{background:#e8efe9;color:var(--foreground)}
 @media(hover:hover){.menu-card:hover{border-color:transparent;box-shadow:none;transform:translateY(-2px)}.menu-card:hover .card-image{box-shadow:0 13px 30px #294b4418}.section-tab:not([data-active]):hover{background:#edf2ed!important}}
 @media(max-width:600px){body{background:#fbfaf5}.brand-header{min-height:64px;padding:10px 18px}.brand-header::after{left:18px;right:18px}.brand-symbol{width:70px;height:35px}.brand-symbol img{width:112px;height:112px;left:-21px;top:-37px}.header-caption{font-size:8px;letter-spacing:1.2px}.header-caption i{width:5px;height:5px}.header-categories{width:36px;height:36px}.menu-heading{min-height:142px;padding:26px 20px 24px}.menu-heading h1{font-size:42px;letter-spacing:-1.8px}.heading-note{font-size:13px}.summer-mark{margin-right:0}.summer-mark i:nth-child(1){width:30px;height:30px}.summer-mark i:nth-child(2){width:17px;height:17px}.summer-mark i:nth-child(3){width:23px;height:23px}.search-row{padding:13px 18px 9px}.search-input{height:44px;border-radius:14px}.category-launcher{width:44px;border-radius:14px}.section-list{height:55px!important;padding:3px 13px 7px!important;gap:4px!important}.section-tab{height:43px!important;flex-direction:column!important;border-radius:12px!important;padding:0 4px!important;gap:3px!important;font-size:10px!important}.section-tab svg{width:17px;height:17px}.category-strip{padding:9px 18px 13px}.menu-content{padding:0 18px 25px}.education-banner{min-height:92px;margin-top:20px;padding:17px 15px;border-radius:16px}.education-orbit{width:46px;height:46px}.education-copy strong{font-size:21px}.education-copy>span{font-size:11px}.education-arrow{width:35px;height:35px}.results-heading{padding:27px 0 16px}.results-heading h2{font-size:25px}.product-grid{gap:23px 12px}.card-image{border-radius:15px}.card-content{padding:11px 2px 0}.card-content h3{font-size:14px}.item-category{font-size:7px}.card-bottom strong{font-size:16px}.menu-footer{margin:0 18px}.all-categories-button{margin-top:30px}}
 @media(max-width:600px){.hookah-builder{display:grid!important;grid-template-columns:1fr!important;grid-template-rows:220px minmax(0,1fr);height:calc(100dvh - 16px)!important;max-height:calc(100dvh - 16px)!important;overflow:hidden!important}.hookah-builder .education-visual{height:220px;min-height:220px}.hookah-builder .builder-panel{min-height:0;height:100%;overflow-y:auto;overscroll-behavior:contain;padding-bottom:calc(20px + env(safe-area-inset-bottom))}.hookah-builder .education-dismiss{position:sticky;float:right;top:0;right:0;margin-top:-7px}.hookah-builder .builder-heading{display:flow-root}.hookah-builder .flavor-grid{max-height:none;overflow:visible}}
-/* Zoi quiet menu â€” compact, direct and built for a QR visit */
+/* Zoi quiet menu — compact, direct and built for a QR visit */
 body{background:#e9ede8;color:#163b37;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
 button{transition:color .22s ease,background-color .22s ease,border-color .22s ease,opacity .22s ease}button:active{transform:none;opacity:.72}
 .menu-app{max-width:920px;background:#fcfcf8;box-shadow:none}
@@ -269,6 +269,18 @@ body{background:#eae9e2}
   .flavor-profile{margin-top:12px;padding:12px}
 }
 
+/* Zoi emblem sits behind the 3D model instead of the wordmark. */
+.zoi-model-emblem{position:absolute;z-index:0;top:44%;left:50%;width:min(58%,290px);height:auto;transform:translate(-50%,-50%);opacity:.11;pointer-events:none;user-select:none}
+.dark-visual .zoi-model-emblem{opacity:.14;filter:invert(1) brightness(1.7)}
+@media(max-width:600px){.zoi-model-emblem{width:min(56%,210px);top:43%}}
+
+/* Calmer product scale on the menu grid: smaller subjects, more air. */
+.product-grid{gap:24px 16px}
+.card-image{aspect-ratio:1.16}
+.card-image>img{padding:7% 13%}
+@media(min-width:901px){.product-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:600px){.product-grid{gap:19px 11px}.card-image{aspect-ratio:1.12}.card-image>img{padding:6% 11%}}
+
 /* ---- Builder panel refined to the menu's own typographic language ---- */
 .hookah-builder{background:#fcfbf6!important;box-shadow:0 30px 90px #173b381f}
 .builder-panel{padding:38px 34px 26px}
@@ -341,44 +353,63 @@ body{background:#eae9e2}
 }
 
 /* ================= Hero ================= */
-.hero{position:relative;height:62vh;min-height:400px;max-height:600px;overflow:hidden;
-  background:radial-gradient(120% 90% at 50% 0%,#1d3833 0%,#14261f 46%,#0e1a16 100%);
+.hero{position:relative;height:60vh;min-height:400px;max-height:580px;overflow:hidden;
+  background:linear-gradient(180deg,#faf6eed6 0%,#f2ecdfe3 65%,#ece5d6f0 100%),
+    url('/stone-wall.jpg') center top/760px auto repeat;
   display:flex;flex-direction:column;align-items:center;justify-content:flex-end}
-.hero-line-art{position:absolute;top:9%;left:50%;transform:translateX(-50%);width:min(84%,440px);height:auto;opacity:.92}
-.hero-line-art .la-line{fill:none;stroke:#d7cbb8;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;
+.hero-line-art{position:absolute;top:9%;left:50%;transform:translateX(-50%);width:min(84%,440px);height:auto;opacity:.94}
+.hero-line-art .la-line{fill:none;stroke:#2c4a3f;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;
   stroke-dasharray:1;stroke-dashoffset:1;animation:la-draw 1.6s cubic-bezier(.22,.75,.2,1) forwards}
 .hero-line-art .la-roof{animation-delay:.15s}
-.hero-line-art .la-foliage{stroke:#7fa08f;animation-delay:.45s}
-.hero-line-art .la-garland{stroke:#c79a67;animation-delay:.75s}
-.hero-line-art .la-mark{stroke:#f1e4cf;stroke-width:2.1;animation-delay:1.55s;animation-duration:1s}
-.hero-line-art .la-bulb path{fill:none;stroke:#c79a67;stroke-width:1.3;stroke-dasharray:1;stroke-dashoffset:1;
+.hero-line-art .la-foliage{stroke:#7c9686;animation-delay:.45s}
+.hero-line-art .la-garland{stroke:#a4573e;animation-delay:.75s}
+.hero-line-art .la-mark{stroke:#22443a;stroke-width:2.3;animation-delay:1.55s;animation-duration:1s}
+.hero-line-art .la-bulb path{fill:none;stroke:#a4573e;stroke-width:1.3;stroke-dasharray:1;stroke-dashoffset:1;
   animation:la-draw .5s ease forwards;animation-delay:var(--bulb-delay)}
-.hero-line-art .la-bulb circle{fill:#e8b168;opacity:0;transform-origin:center;
+.hero-line-art .la-bulb circle{fill:#c17a4a;opacity:0;transform-origin:center;
   animation:la-bulb-glow .6s ease forwards;animation-delay:var(--bulb-delay)}
-.hero-line-art .la-dot{fill:#f1e4cf;opacity:0;animation:la-bulb-glow .5s ease forwards;animation-delay:2.5s}
+.hero-line-art .la-dot{fill:#22443a;opacity:0;animation:la-bulb-glow .5s ease forwards;animation-delay:2.5s}
 @keyframes la-draw{to{stroke-dashoffset:0}}
 @keyframes la-bulb-glow{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:scale(1)}}
 
 .hero-copy{position:relative;display:flex;flex-direction:column;align-items:center;gap:12px;
-  padding:0 32px 54px;text-align:center;color:#f3f0e8}
-.hero-kicker{font-size:10.5px;font-weight:700;letter-spacing:.4em;color:#a9c2b4;
+  padding:0 32px 44px;text-align:center;color:#22443a}
+.hero-kicker{font-size:10.5px;font-weight:700;letter-spacing:.4em;color:#7d9184;
   opacity:0;animation:hero-fade-up .7s 1.05s ease forwards}
 .hero-name{display:flex;justify-content:center;flex-wrap:wrap;margin:0;
   font-family:'Iowan Old Style',Baskerville,Georgia,serif;font-weight:400;font-style:italic;
-  font-size:clamp(30px,6vw,44px);letter-spacing:.03em;color:#f6f2ea}
+  font-size:clamp(30px,6vw,44px);letter-spacing:.03em;color:#193f3b}
 .hero-name span{display:inline-block;opacity:0;transform:translateY(14px);
   animation:hero-letter-in .55s cubic-bezier(.2,.8,.2,1) forwards;animation-delay:var(--letter-delay)}
 .hero-line{max-width:34ch;margin:0;font-family:Arial,sans-serif;font-weight:400;
-  font-size:13.5px;line-height:1.6;letter-spacing:.01em;color:#cdd8cf;
+  font-size:13.5px;line-height:1.6;letter-spacing:.01em;color:#5d6e62;
   opacity:0;animation:hero-fade-up .8s 2.35s ease forwards}
-.hero-scroll{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);width:34px;height:34px;
-  display:grid;place-items:center;border:1px solid rgba(255,255,255,.35);border-radius:50%;color:#f3f0e8;
-  opacity:0;animation:hero-fade-up .6s 2.6s ease forwards,hero-bob 2.2s 3.2s ease-in-out infinite}
 @keyframes hero-fade-up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 @keyframes hero-letter-in{to{opacity:1;transform:translateY(0)}}
-@keyframes hero-bob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(5px)}}
 
-.hero-cta{margin:22px clamp(16px,4.4vw,38px) 0;width:auto}
+/* Sketch-quality second passes for the roofline and canopy. */
+.la-roof-ghost{opacity:.32;stroke-width:1;animation-delay:.05s}
+.la-foliage-back{stroke:#9db3a4;opacity:.6;animation-delay:.3s}
+.hero-line-art .la-brow{stroke-width:1.6}
+.hero-line-art .la-sprig{stroke:#7c9686;opacity:.6;animation-delay:.55s;animation-duration:.5s}
+.la-glow{fill:#c17a4a;opacity:0;animation:la-glow-in 1.4s 1.35s ease forwards}
+@keyframes la-glow-in{to{opacity:.08}}
+
+/* Long transparent "Nargileni Oluştur" pill, sitting directly below the hero. */
+.hero-cta{position:relative;z-index:3;display:flex;align-items:center;justify-content:space-between;gap:18px;
+  width:calc(100% - 64px);margin:24px auto 26px;padding:19px 26px;
+  border:1px solid rgba(255,255,255,.16);border-radius:999px;
+  background:rgba(20,42,37,.8);backdrop-filter:blur(16px) saturate(150%);-webkit-backdrop-filter:blur(16px) saturate(150%);
+  box-shadow:0 16px 34px rgba(20,42,37,.22),inset 0 1px 0 rgba(255,255,255,.12);
+  color:#f6f2ea;cursor:pointer;text-align:left;
+  opacity:0;animation:hero-fade-up .7s 2.15s cubic-bezier(.2,.85,.25,1) forwards}
+.hero-cta-text{display:flex;flex-direction:column;gap:3px;min-width:0}
+.hero-cta-text strong{font-family:'Iowan Old Style',Baskerville,Georgia,serif;font-style:italic;font-weight:400;
+  font-size:19px;letter-spacing:.01em;white-space:nowrap}
+.hero-cta-text small{font-family:Arial,sans-serif;font-size:10.5px;letter-spacing:.03em;color:rgba(246,242,234,.78);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hero-cta-arrow{flex:0 0 auto;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;
+  background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.32)}
 
 @media(max-width:600px){
   .hero{height:56vh;min-height:360px}
@@ -387,12 +418,19 @@ body{background:#eae9e2}
   .hero-name{font-size:clamp(26px,8vw,34px)}
   .hero-line{font-size:12.5px;max-width:28ch}
   .hero-kicker{font-size:9px;letter-spacing:.32em}
-  .hero-cta{margin:16px 18px 0}
+  .hero-cta{width:calc(100% - 34px);margin:16px auto 18px;padding:15px 18px;gap:10px}
+  .hero-cta-text strong{font-size:16px}
+  .hero-cta-text small{font-size:9.5px}
+  .hero-cta-arrow{width:32px;height:32px}
 }
 @media(prefers-reduced-motion:reduce){
   .hero-line-art .la-line,.hero-line-art .la-bulb path,.hero-line-art .la-bulb circle,.hero-line-art .la-dot,
-  .hero-kicker,.hero-name span,.hero-line,.hero-scroll{animation:none;opacity:1;stroke-dashoffset:0}
+  .hero-kicker,.hero-name span,.hero-line,.hero-cta{animation:none;opacity:1;stroke-dashoffset:0}
 }
+
+/* Search row removed from the sticky bar; restore breathing room above the tabs. */
+.sticky-controls{padding-top:16px}
+@media(max-width:600px){.sticky-controls{padding-top:10px}}
 
 /* ================= Mobile smoothness pass ================= */
 html{scroll-behavior:smooth}
