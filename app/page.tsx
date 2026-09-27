@@ -1,6 +1,6 @@
 'use client';
 import { lazy, Suspense, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
-import { ArrowUpRight, Search, X, Coffee, IceCreamBowl, Utensils, LayoutGrid, List, ChevronRight, ChevronDown, Check } from 'lucide-react';
+import { ArrowUpRight, Search, X, Coffee, IceCreamBowl, Utensils, LayoutGrid, List, ChevronRight, ChevronLeft, ChevronDown, Check } from 'lucide-react';
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog-local';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import menu from '@/data/menu.json';
@@ -40,6 +40,7 @@ export default function Home() {
   const [hookahDetail,setHookahDetail]=useState(false);
   const [hookahLine,setHookahLine]=useState<'classic'|'dark'>('classic');
   const [hookahQuery,setHookahQuery]=useState('');
+  const [aromaStatus,setAromaStatus]=useState('Love 66 seçildi');
   const [selectedAromaIds,setSelectedAromaIds]=useState<string[]>(['love-66']);
   const [focusedAromaId,setFocusedAromaId]=useState('love-66');
   const activeSection=sections.find(entry=>entry.name===section)!;
@@ -60,10 +61,14 @@ export default function Home() {
   const pairIds=selected?pairingByCategory[selected.category]:undefined;
   const pairId=selected&&pairIds?.length?pairIds[(Number(selected.id)-1)%pairIds.length]:undefined;
   const pairedProduct=pairId?menu.groups.flatMap(group=>group.items.map(item=>({...item,category:group.category}))).find(item=>item.id===pairId):undefined;
+  const selectedCategoryItems=selected?menu.groups.find(group=>group.category===selected.category)?.items.map(item=>({...item,category:selected.category}))||[]:[];
+  const selectedIndex=selected?selectedCategoryItems.findIndex(item=>item.id===selected.id):-1;
+  const previousProduct=selectedIndex>=0?selectedCategoryItems[(selectedIndex-1+selectedCategoryItems.length)%selectedCategoryItems.length]:undefined;
+  const nextProduct=selectedIndex>=0?selectedCategoryItems[(selectedIndex+1)%selectedCategoryItems.length]:undefined;
   function chooseCategory(name:string){const parent=sections.find(entry=>entry.categories.includes(name));if(parent)setSection(parent.name);setCategory(name);setQuery('');setCategoriesOpen(false);window.scrollTo({top:0,behavior:'smooth'});}
   function chooseSection(name:string){const entry=sections.find(option=>option.name===name);if(entry)chooseCategory(entry.categories[0]);}
-  function changeHookahLine(line:'classic'|'dark'){const first=hookahFlavors.find(flavor=>flavor.line===line)!;setHookahLine(line);setHookahQuery('');setSelectedAromaIds([first.id]);setFocusedAromaId(first.id);setHookahDetail(false);}
-  function toggleAroma(flavor:HookahFlavor){const picked=selectedAromaIds.includes(flavor.id);if(picked){const next=selectedAromaIds.filter(id=>id!==flavor.id);setSelectedAromaIds(next);setFocusedAromaId(next.at(-1)||'');return;}const next=selectedAromaIds.length>=3?[...selectedAromaIds.slice(1),flavor.id]:[...selectedAromaIds,flavor.id];setSelectedAromaIds(next);setFocusedAromaId(flavor.id);}
+  function changeHookahLine(line:'classic'|'dark'){const first=hookahFlavors.find(flavor=>flavor.line===line)!;setHookahLine(line);setHookahQuery('');setSelectedAromaIds([first.id]);setFocusedAromaId(first.id);setAromaStatus(`${first.name} seçildi`);setHookahDetail(false);}
+  function toggleAroma(flavor:HookahFlavor){const picked=selectedAromaIds.includes(flavor.id);if(picked){const next=selectedAromaIds.filter(id=>id!==flavor.id);setSelectedAromaIds(next);setFocusedAromaId(next.at(-1)||'');setAromaStatus(`${flavor.name} çıkarıldı`);return;}if(selectedAromaIds.length>=3){setFocusedAromaId(flavor.id);setAromaStatus('3 aroma sınırı · önce bir aromayı çıkar');return;}const next=[...selectedAromaIds,flavor.id];setSelectedAromaIds(next);setFocusedAromaId(flavor.id);setAromaStatus(`${flavor.name} eklendi · ${next.length}/3`);}
   return <main className="menu-app">
     <header className="brand-header"><a className="brand" href="#menu" aria-label="Zoi Kırkpınar menü"><span className="brand-symbol"><img src="/logo.webp" alt="Zoi" /></span></a><span className="menu-word">MENÜ</span><button className="icon-button header-categories" onClick={()=>setCategoriesOpen(true)} aria-label="Tüm kategorileri aç"><LayoutGrid size={19}/></button></header>
 
@@ -92,14 +97,9 @@ export default function Home() {
             <circle cx={x} cy={y+drop+5} r={3.4} />
           </g>
         ))}
-        {/* Z, a ring open at the top with a separate floating brow above the
-            gap, and a plain vertical stroke — Turkish capital I has no dot. */}
-        <path className="la-line la-mark" pathLength={1} d="M140,206 L179,206 L140,255 L181,255" />
-        <path className="la-line la-mark" pathLength={1} d="M221.84,206.25 A28,28 0 1 1 192.16,206.25" />
-        <path className="la-line la-mark la-brow" pathLength={1} d="M186,202 Q207,185 228,202" />
-        <path className="la-line la-mark" pathLength={1} d="M255,208 L255,251 Q255,260 264,256" />
       </svg>
       <div className="hero-copy">
+        <img className="hero-brandmark" src="/logo.webp" alt="Zoi" />
         <span className="hero-kicker">CAFE &amp; NARGİLE</span>
         <h1 className="hero-name" aria-label="Zoi Kırkpınar">
           {'KIRKPINAR'.split('').map((letter,index)=>(
@@ -119,6 +119,10 @@ export default function Home() {
     </button>
 
     <div className="sticky-controls">
+      <div className="menu-search-row">
+        <label className="menu-search"><Search size={17}/><input type="search" value={query} onChange={event=>setQuery(event.target.value)} placeholder="Menüde ara" aria-label="Menüde ürün ara"/>{query&&<button onClick={()=>setQuery('')} aria-label="Aramayı temizle"><X size={16}/></button>}</label>
+        <button className="menu-directory-button" onClick={()=>setCategoriesOpen(true)} aria-label="Tüm kategorileri aç"><LayoutGrid size={18}/><span>Kategoriler</span></button>
+      </div>
       <div className="section-tabs">
         <Tabs value={section} onValueChange={chooseSection}><TabsList className="section-list" aria-label="Menü bölümleri">{sections.map(({name,icon:Icon})=><TabsTrigger value={name} key={name} className="section-tab"><Icon size={20} strokeWidth={1.5}/><span>{name}</span></TabsTrigger>)}</TabsList></Tabs>
       </div>
@@ -133,7 +137,7 @@ export default function Home() {
     <Dialog open={Boolean(selected)} onOpenChange={open=>{if(!open)setSelected(null)}}>
       <DialogContent className="detail-dialog" showCloseButton={false}>{selected&&<>
         <DialogClose className="dialog-dismiss" aria-label="Ürün detayını kapat">Kapat <X size={17}/></DialogClose>
-        <div className="detail-image"><span className="detail-visual-word" aria-hidden="true">zoi</span><ProductImage item={selected}/><span className="detail-visual-index">ZOI · KIRKPINAR</span></div>
+        <div className="detail-image"><span className="detail-visual-word" aria-hidden="true">zoi</span><ProductImage item={selected}/><span className="detail-visual-index">ZOI · KIRKPINAR</span><div className="detail-navigation" aria-label="Kategori ürünleri"><button onClick={()=>previousProduct&&setSelected(previousProduct)} aria-label="Önceki ürün"><ChevronLeft size={17}/></button><span>{selectedIndex+1} / {selectedCategoryItems.length}</span><button onClick={()=>nextProduct&&setSelected(nextProduct)} aria-label="Sonraki ürün"><ChevronRight size={17}/></button></div></div>
         <div className="detail-body">
           <span className="detail-category">ZOI SEÇKİSİ <i/> {selected.category}</span>
           <DialogTitle className="detail-title">{selected.name}</DialogTitle>
@@ -161,6 +165,7 @@ export default function Home() {
         <div className="blend-rail"><span>KARIŞIMIN</span><div className="blend-slots">{[0,1,2].map(index=>{const flavor=selectedAromas[index];return flavor?<button key={flavor.id} onClick={()=>toggleAroma(flavor)} aria-label={`${flavor.name} aromasını çıkar`} style={{'--flavor':flavor.color} as CSSProperties}><i/>{flavor.name}<X size={13}/></button>:<span key={index}>+ Aroma</span>})}</div></div>
         <label className="flavor-search"><Search size={16}/><input value={hookahQuery} onChange={event=>setHookahQuery(event.target.value)} placeholder="Aroma ara" aria-label="Nargile aroması ara"/>{hookahQuery&&<button onClick={()=>setHookahQuery('')} aria-label="Aroma aramasını temizle"><X size={15}/></button>}</label>
         <div className="flavor-count"><span>Aromalar</span><small>{selectedAromas.length}/3</small></div>
+        <p className="aroma-status" aria-live="polite">{aromaStatus}</p>
         <div className="flavor-grid" aria-label="Aroma seçenekleri">
           {visibleAromas.map(flavor=>{const picked=selectedAromaIds.includes(flavor.id);return <button key={flavor.id} aria-pressed={picked} className={picked?'flavor-card picked':'flavor-card'} onClick={()=>toggleAroma(flavor)}><i style={{'--flavor':flavor.color} as CSSProperties}/><span><strong>{flavor.name}</strong><small>{flavor.tags.slice(0,2).join(' · ')}</small></span><b>{picked?<Check size={14}/>:<span>+</span>}</b></button>})}
         </div>

@@ -69,7 +69,7 @@ export function HookahEducation3D({ accents, darkLine = false, onDetailChange }:
     scene.environment = environment.texture;
 
     const model = new THREE.Group();
-    model.position.y = -0.08;
+    model.position.set(-0.24, -0.08, 0);
     model.rotation.y = -0.3;
     scene.add(model);
 
@@ -356,7 +356,7 @@ export function HookahEducation3D({ accents, darkLine = false, onDetailChange }:
     const warm=new THREE.PointLight(0xffc7a2,12,12,2); warm.position.set(2.8,1.7,3.5); scene.add(warm);
 
     let targetCameraZ=11.9,detailView=false;
-    const fullCameraDistance=()=>camera.aspect>1.35?11.55:camera.aspect<.85?17.2:11.9;
+    const fullCameraDistance=()=>camera.aspect>1.35?11.55:camera.aspect<.85?18.8:11.9;
     const resize=()=>{
       const bounds=host.getBoundingClientRect();
       const width=Math.max(bounds.width,1),height=Math.max(bounds.height,1);
@@ -374,18 +374,13 @@ export function HookahEducation3D({ accents, darkLine = false, onDetailChange }:
     };
     const onCancel=()=>{dragging=false};
     const onMove=(event:PointerEvent)=>{if(!dragging)return;const delta=(event.clientX-pointerX)*.007;targetRotation+=delta;velocity=delta;pointerX=event.clientX};
-    const onUp=(event:PointerEvent)=>{
-      dragging=false;
-      if(Math.hypot(event.clientX-startX,event.clientY-startY)<8){
-        detailView=!detailView;
-        onDetailChange?.(detailView);
-        targetCameraY=detailView?4.17:2.3;
-        targetCameraZ=detailView?3.45:fullCameraDistance();
-      }
-    };
+    const toggleDetail=()=>{detailView=!detailView;onDetailChange?.(detailView);targetCameraY=detailView?4.17:2.3;targetCameraZ=detailView?3.45:fullCameraDistance();};
+    const onUp=(event:PointerEvent)=>{dragging=false;if(Math.hypot(event.clientX-startX,event.clientY-startY)<8)toggleDetail();};
+    const onKeyDown=(event:KeyboardEvent)=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleDetail();}if(event.key==='ArrowLeft')targetRotation-=.34;if(event.key==='ArrowRight')targetRotation+=.34;};
     renderer.domElement.style.touchAction='none';
     renderer.domElement.addEventListener('pointerdown',onDown); renderer.domElement.addEventListener('pointermove',onMove);
     renderer.domElement.addEventListener('pointerup',onUp); renderer.domElement.addEventListener('pointercancel',onCancel);
+    host.addEventListener('keydown',onKeyDown);
 
     const reduceMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
     let frame=0,clock=0;
@@ -488,6 +483,7 @@ export function HookahEducation3D({ accents, darkLine = false, onDetailChange }:
       cancelAnimationFrame(frame); observer.disconnect();
       renderer.domElement.removeEventListener('pointerdown',onDown); renderer.domElement.removeEventListener('pointermove',onMove);
       renderer.domElement.removeEventListener('pointerup',onUp); renderer.domElement.removeEventListener('pointercancel',onCancel);
+      host.removeEventListener('keydown',onKeyDown);
       scene.traverse(object=>{
         if (object instanceof THREE.Mesh) {
           object.geometry.dispose();
@@ -514,6 +510,5 @@ export function HookahEducation3D({ accents, darkLine = false, onDetailChange }:
     });
   },[accents.join('|')]);
 
-  return <div ref={hostRef} className="hookah-canvas" role="img" aria-label="Sürükleyerek çevrilebilen üç boyutlu modern nargile modeli"/>;
+  return <div ref={hostRef} className="hookah-canvas" role="button" tabIndex={0} aria-label="Üç boyutlu nargileyi çevir; detay görünümü için dokun veya Enter tuşuna bas"/>;
 }
-
