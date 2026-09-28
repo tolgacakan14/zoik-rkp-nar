@@ -9,91 +9,91 @@
           "name": "Espresso",
           "price": 160,
           "description": "",
-          "image": "/products/1.png",
+          "image": "/products/1.webp",
           "id": "1"
         },
         {
           "name": "Americano",
           "price": 190,
           "description": "",
-          "image": "/products/2.png",
+          "image": "/products/2.webp",
           "id": "2"
         },
         {
           "name": "Türk Kahvesi",
           "price": 170,
           "description": "",
-          "image": "/products/3.png",
+          "image": "/products/3.webp",
           "id": "3"
         },
         {
           "name": "Cafe Latte",
           "price": 230,
           "description": "",
-          "image": "/products/4.png",
+          "image": "/products/4.webp",
           "id": "4"
         },
         {
           "name": "Tahinli Latte",
           "price": 250,
           "description": "",
-          "image": "/products/5.png",
+          "image": "/products/5.webp",
           "id": "5"
         },
         {
           "name": "Piccolo Latte",
           "price": 200,
           "description": "",
-          "image": "/products/6.png",
+          "image": "/products/6.webp",
           "id": "6"
         },
         {
           "name": "Flat White",
           "price": 230,
           "description": "",
-          "image": "/products/7.png",
+          "image": "/products/7.webp",
           "id": "7"
         },
         {
           "name": "Cortado",
           "price": 210,
           "description": "",
-          "image": "/products/8.png",
+          "image": "/products/8.webp",
           "id": "8"
         },
         {
           "name": "Cappuccino",
           "price": 220,
           "description": "",
-          "image": "/products/9.png",
+          "image": "/products/9.webp",
           "id": "9"
         },
         {
           "name": "Mocha",
           "price": 230,
           "description": "",
-          "image": "/products/10.png",
+          "image": "/products/10.webp",
           "id": "10"
         },
         {
           "name": "White Chocolate Mocha",
           "price": 250,
           "description": "",
-          "image": "/products/11.png",
+          "image": "/products/11.webp",
           "id": "11"
         },
         {
           "name": "Filtre Kahve",
           "price": 210,
           "description": "",
-          "image": "/products/12.png",
+          "image": "/products/12.webp",
           "id": "12"
         },
         {
           "name": "Macchiato",
           "price": 160,
           "description": "",
-          "image": "/products/13.png",
+          "image": "/products/13.webp",
           "id": "13"
         }
       ]
@@ -105,28 +105,28 @@
           "name": "Zebra Mocha",
           "price": 250,
           "description": "",
-          "image": "/products/14.png",
+          "image": "/products/14.webp",
           "id": "14"
         },
         {
           "name": "Caffe Miel",
           "price": 270,
           "description": "",
-          "image": "/products/15.png",
+          "image": "/products/15.webp",
           "id": "15"
         },
         {
           "name": "Crazy Mocha",
           "price": 250,
           "description": "",
-          "image": "/products/16.png",
+          "image": "/products/16.webp",
           "id": "16"
         },
         {
           "name": "Raspberry Mocha",
           "price": 250,
           "description": "",
-          "image": "/products/17.png",
+          "image": "/products/17.webp",
           "id": "17"
         }
       ]
@@ -138,56 +138,56 @@
           "name": "Ice Latte",
           "price": 280,
           "description": "",
-          "image": "/products/18.png",
+          "image": "/products/18.webp",
           "id": "18"
         },
         {
           "name": "Ice Americano",
           "price": 260,
           "description": "",
-          "image": "/products/19.png",
+          "image": "/products/19.webp",
           "id": "19"
         },
         {
           "name": "Ice Mocha",
           "price": 280,
           "description": "",
-          "image": "/products/20.png",
+          "image": "/products/20.webp",
           "id": "20"
         },
         {
           "name": "Ice Filtre",
           "price": 270,
           "description": "",
-          "image": "/products/21.png",
+          "image": "/products/21.webp",
           "id": "21"
         },
         {
           "name": "Ice Zebra Mocha",
           "price": 290,
           "description": "",
-          "image": "/products/22.png",
+          "image": "/products/22.webp",
           "id": "22"
         },
         {
           "name": "Ice White Mocha",
           "price": 290,
           "description": "",
-          "image": "/products/23.png",
+          "image": "/products/23.webp",
           "id": "23"
         },
         {
           "name": "Ice Flat White",
           "price": 290,
           "description": "",
-          "image": "/products/24.png",
+          "image": "/products/24.webp",
           "id": "24"
         },
         {
           "name": "Affogato",
           "price": 250,
           "description": "",
-          "image": "/products/25.png",
+          "image": "/products/25.webp",
           "id": "25"
         }
       ]
@@ -199,14 +199,14 @@
           "name": "Matcha Latte",
           "price": 280,
           "description": "İsteğe Bağlı ; Çilek , Vanilya , Yaban Mersini",
-          "image": "/products/26.png",
+          "image": "/products/26.webp",
           "id": "26"
         },
         {
           "name": "Ice Matcha Latte",
           "price": 280,
           "description": "İsteğe Bağlı ; Çilek , Vanilya veya Yaban Mersini",
-          "image": "/products/27.png",
+          "image": "/products/27.webp",
           "id": "27"
         }
       ]
