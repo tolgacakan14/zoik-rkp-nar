@@ -40,20 +40,104 @@ export const productPresentation: Record<string, ProductPresentation> = {
   '60': { intro: 'Günün temposuna kısa bir çay molası.', character: 'Sıcak · sade' },
 };
 
-export const pairingByCategory: Record<string, string[]> = {
-  'Espresso Bar': ['49', '50', '51', '52'],
-  'Zoi Bar': ['49', '50', '51', '52'],
-  'Ice Bar': ['49', '51', '53'],
-  'Matcha': ['49', '53'],
-  'Kokteyl': ['36', '37', '39', '40'],
-  'Gurme Sandviç': ['34', '18', '70'],
-  'Tostlar': ['34', '70', '60'],
-  'Başlangıçlar': ['34', '70', '61'],
-  'Makarna Mantı': ['34', '70'],
-  'Tatlılar': ['1', '4', '8', '18'],
-  'Dondurma': ['1', '8'],
-  'Frozen & Milkshake': ['49', '51'],
-  'Tea Pot': ['49', '50'],
-  'Soğuk İçecekler': ['36', '41', '44'],
-  'Lüks Çerez': ['60', '61'],
+export type PairingGuide = { productId: string; note: string };
+
+// Every menu category crosses the table: drinks recommend food or dessert,
+// while food, dessert and service items recommend a drink.
+export const pairingGuides: Record<string, PairingGuide[]> = {
+  'Espresso Bar': [
+    { productId: '49', note: 'Kahvenin belirgin gövdesi, San Sebastian’ın kremamsı dokusunu dengeler.' },
+    { productId: '50', note: 'Kahve notaları tiramisunun katmanlarıyla doğal bir bütünlük kurar.' },
+    { productId: '51', note: 'Kakao yoğunluğu fincandaki kavruk karakteri daha uzun hissettirir.' },
+    { productId: '52', note: 'Profiterolün yumuşak çikolatası kahvenin net bitişini yuvarlar.' },
+    { productId: '53', note: 'Soğuk ve sıcak kontrastı, kısa ama akılda kalan bir final verir.' },
+  ],
+  'Zoi Bar': [
+    { productId: '50', note: 'İmza kahvenin aromatik yapısı tiramisunun hafif katmanlarını tamamlar.' },
+    { productId: '49', note: 'Kremamsı tatlı, Zoi kahvesinin güçlü aromalarını sakinleştirir.' },
+    { productId: '52', note: 'Çikolatalı iki karakter, yumuşak ve uzun bir tatlı bitiş yaratır.' },
+    { productId: '53', note: 'Dondurmanın sade serinliği aromatik kahveyi öne çıkarır.' },
+  ],
+  'Ice Bar': [
+    { productId: '36', note: 'Serin kahve, Caesary’nin kremamsı ve tuzlu yapısını hafifletir.' },
+    { productId: '49', note: 'Buzlu kahvenin ferahlığı yoğun tatlıya temiz bir kontrast verir.' },
+    { productId: '37', note: 'Zeytin ve yeşillik notaları, soğuk kahvenin sade çizgisiyle dengelenir.' },
+    { productId: '51', note: 'Soğuk kahve ve kakao, tanıdık ama güçlü bir eşleşme kurar.' },
+    { productId: '53', note: 'İki serin dokunun buluşması hafif ve yazlık bir final oluşturur.' },
+  ],
+  'Matcha': [
+    { productId: '49', note: 'Matchanın bitkisel tonu kremamsı tatlıyla yumuşak bir denge kurar.' },
+    { productId: '53', note: 'Dondurma, matchanın yeşil karakterini daha ipeksi hale getirir.' },
+    { productId: '37', note: 'Taze ve bitkisel iki profil, hafif bir öğün eşleşmesi oluşturur.' },
+  ],
+  'Kokteyl': [
+    { productId: '36', note: 'Canlı asidite Caesary’nin kremamsı dokusunu tazeler.' },
+    { productId: '37', note: 'Bitkisel kokteyl notaları Olive Garden’ın yeşil karakterini büyütür.' },
+    { productId: '38', note: 'Meyvemsi ferahlık trüfün güçlü aromasına temiz bir karşılık verir.' },
+    { productId: '39', note: 'Tatlı-ekşi denge, Anatolia Melt’in sıcak ve baharatlı yapısını açar.' },
+    { productId: '40', note: 'Narenciye çizgisi Riviera’nın hafif Akdeniz karakterini tamamlar.' },
+    { productId: '44', note: 'Paylaşımlık çıtır tabak, uzun kokteyl keyfine rahatça eşlik eder.' },
+  ],
+  'Frozen & Milkshake': [
+    { productId: '41', note: 'Serin ve tatlı içim, kaşarlı tostun sıcaklığını dengeler.' },
+    { productId: '42', note: 'Meyvemsi ferahlık sucuklu tostun belirgin baharatını hafifletir.' },
+    { productId: '45', note: 'Çıtır patates, yoğun ve kremamsı içime tuzlu bir kontrast verir.' },
+    { productId: '46', note: 'Doyurucu çıtır tabak, milkshake’i küçük bir öğüne dönüştürür.' },
+  ],
+  'Tea Pot': [
+    { productId: '41', note: 'Sıcak çay ve kaşarlı tost, günün her saatine uyan klasik bir ikilidir.' },
+    { productId: '42', note: 'Çayın sade karakteri sucuklu tostun baharatını temizler.' },
+    { productId: '50', note: 'Tiramisunun hafif katmanları çay molasına yumuşak bir final ekler.' },
+  ],
+  'Soğuk İçecekler': [
+    { productId: '36', note: 'Ferahlık, sandviçin kremamsı dokusunu dengeli biçimde hafifletir.' },
+    { productId: '41', note: 'Soğuk içecek sıcak tostla net ve tanıdık bir kontrast kurar.' },
+    { productId: '44', note: 'Paylaşımlık tabak, uzun ve serin içime sosyal bir eşlikçi olur.' },
+    { productId: '47', note: 'Canlı içim, Alfredo sosunun yoğunluğunu damakta hafifletir.' },
+    { productId: '75', note: 'Tuzlu çerezler serin içeceğin ferahlığını daha belirgin hale getirir.' },
+  ],
+  'Gurme Sandviç': [
+    { productId: '18', note: 'Buzlu latte sandviçin güçlü soslarını yumuşak bir kahveyle dengeler.' },
+    { productId: '34', note: 'Cool Lime’ın canlı asiditesi lokmalar arasında ferahlık sağlar.' },
+    { productId: '70', note: 'Limonata, sandviçin sıcak ve tuzlu karakterini temiz bir bitişle açar.' },
+    { productId: '74', note: 'Doğal mineralli su, malzemelerin karakterini değiştirmeden damağı tazeler.' },
+    { productId: '27', note: 'Soğuk matcha, yeşil ve hafif aromalarla modern bir öğün dengesi kurar.' },
+  ],
+  'Tostlar': [
+    { productId: '60', note: 'Sıcak çayın sade yapısı tostun peynirli ve baharatlı dokusunu dengeler.' },
+    { productId: '70', note: 'Limonatanın asiditesi sıcak tosttan sonra ferah bir bitiş verir.' },
+    { productId: '63', note: 'Churchill’in tuzlu ekşiliği tostun yoğunluğunu canlı tutar.' },
+  ],
+  'Başlangıçlar': [
+    { productId: '34', note: 'Cool Lime çıtır ve tuzlu başlangıçlara canlı bir ferahlık katar.' },
+    { productId: '74', note: 'Mineralli su, paylaşım tabağındaki farklı tatlar arasında damağı yeniler.' },
+    { productId: '31', note: 'Bitkisel kokteyl notaları çıtır tabağa daha rafine bir eşlik sunar.' },
+    { productId: '70', note: 'Limonata, kızartmanın yoğunluğunu hafif ve temiz bir finalle keser.' },
+  ],
+  'Makarna Mantı': [
+    { productId: '70', note: 'Limonatanın ferah asiditesi kremalı ve sıcak tabağı hafifletir.' },
+    { productId: '74', note: 'Mineralli su, sosun karakterini korurken damağı tazeler.' },
+    { productId: '33', note: 'Meyvemsi hibiskus, sıcak yemeğe zarif ve canlı bir kontrast verir.' },
+  ],
+  'Tatlılar': [
+    { productId: '1', note: 'Kısa ve yoğun espresso tatlının şekerini net bir bitişle dengeler.' },
+    { productId: '8', note: 'Cortado, az sütlü yapısıyla tatlıya yumuşak ama belirgin eşlik eder.' },
+    { productId: '12', note: 'Filtre kahvenin uzun içimi tatlı molasını sakin biçimde tamamlar.' },
+    { productId: '18', note: 'Buzlu latte, çikolata ve kremaya serin bir denge getirir.' },
+    { productId: '26', note: 'Matchanın bitkisel tonu tatlıya modern ve hafif bir kontrast verir.' },
+  ],
+  'Dondurma': [
+    { productId: '1', note: 'Espressonun sıcak ve yoğun karakteri dondurmayla klasik bir kontrast kurar.' },
+    { productId: '8', note: 'Cortado, dondurmanın tatlılığını kısa ve dengeli bir kahveyle tamamlar.' },
+    { productId: '19', note: 'Ice Americano sade yapısıyla dondurmanın lezzetini önde bırakır.' },
+  ],
+  'Lüks Çerez': [
+    { productId: '60', note: 'Sıcak çay, çerezin kavruk ve tuzlu notalarını sakin biçimde tamamlar.' },
+    { productId: '61', note: 'Soda, çerezlerin yoğunluğu arasında damağı taze tutar.' },
+    { productId: '19', note: 'Ice Americano kavruk notaları büyütürken sade bir içim sağlar.' },
+  ],
+  'Şarjmatik': [
+    { productId: '73', note: 'Telefonun yenilenirken sen de kısa bir su molası ver.' },
+    { productId: '12', note: 'Bekleme süresine sakin ve uzun bir filtre kahve eşlik etsin.' },
+  ],
 };

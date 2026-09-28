@@ -487,8 +487,17 @@ button{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 .brand-symbol{width:84px;height:42px;overflow:visible}
 .brand-symbol img{position:static;width:100%;height:100%;max-width:100%;object-fit:cover}
 .hero{min-height:430px;background:linear-gradient(180deg,#faf7efd8 0%,#f2eddfeb 68%,#ece5d7f5 100%),url('/stone-wall.jpg') center top/760px auto repeat}
+.hero{--olive-progress:0}
+.olive-tree{position:absolute;z-index:0;bottom:-7px;width:clamp(128px,20%,178px);height:91%;overflow:visible;pointer-events:none;opacity:.79;filter:drop-shadow(0 8px 8px rgba(47,67,56,.06));mix-blend-mode:multiply}
+.olive-tree-left{left:clamp(-43px,-4vw,-18px)}
+.olive-tree-right{right:clamp(-43px,-4vw,-18px);transform:scaleX(-1)}
+.olive-wood path{fill:none;stroke:#536c5f;stroke-width:1.15;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke;stroke-dasharray:1;stroke-dashoffset:1;animation:olive-draw 1.55s .24s cubic-bezier(.22,.75,.2,1) forwards}
+.olive-wood .olive-trunk{stroke:#465f53;stroke-width:1.55;animation-duration:1.25s;animation-delay:.08s}
+.olive-leaf{fill:#788f78;stroke:#4f6e5c;stroke-width:.42;vector-effect:non-scaling-stroke;transform-box:fill-box;transform-origin:center;opacity:clamp(0,calc((var(--olive-progress) - var(--leaf-at)) * 8),1);transform:scale(clamp(.08,calc((var(--olive-progress) - var(--leaf-at)) * 8),1));transition:opacity .14s linear,transform .22s cubic-bezier(.2,.8,.2,1)}
+.olive-fruit{fill:#536653;stroke:#f4efe3;stroke-width:.65;vector-effect:non-scaling-stroke;transform-box:fill-box;transform-origin:center;opacity:clamp(0,calc((var(--olive-progress) - var(--leaf-at)) * 9),1);transform:scale(clamp(.05,calc((var(--olive-progress) - var(--leaf-at)) * 9),1));transition:opacity .14s linear,transform .22s cubic-bezier(.2,.8,.2,1)}
+@keyframes olive-draw{to{stroke-dashoffset:0}}
 .hero-line-art{top:3%;width:min(76%,390px);height:auto;opacity:.82}
-.hero-copy{gap:7px;padding:0 28px 30px}
+.hero-copy{z-index:2;gap:7px;padding:0 28px 30px}
 .hero-brandmark{display:block;width:170px;height:56px;object-fit:cover;opacity:0;transform:translateY(10px);animation:hero-fade-up .72s 1.15s ease forwards}
 .hero-kicker{order:2;margin-top:1px;font-size:9px;letter-spacing:.34em}
 .hero-name{order:3;font-size:clamp(27px,5vw,38px);letter-spacing:.08em}
@@ -539,6 +548,8 @@ button{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 @media(max-width:600px){
   .brand-header{padding:11px 17px 9px}.brand-symbol{width:72px;height:36px}
   .hero{height:54dvh;min-height:390px;max-height:520px}
+  .olive-tree{bottom:-9px;width:118px;height:84%;opacity:.7}
+  .olive-tree-left{left:-38px}.olive-tree-right{right:-38px}
   .hero-line-art{top:4%;width:86%;max-height:230px}
   .hero-copy{gap:6px;padding:0 20px 24px}
   .hero-brandmark{width:146px;height:48px}
@@ -550,4 +561,47 @@ button{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
   .detail-navigation button{width:31px;height:31px}
   .aroma-status{margin-bottom:2px}
 }
-@media(prefers-reduced-motion:reduce){.hero-brandmark,.hero-cta::before,.detail-dialog .detail-image>img,.detail-dialog .detail-body>*,.flavor-card.picked::after{animation:none;opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.hero-brandmark,.hero-cta::before,.detail-dialog .detail-image>img,.detail-dialog .detail-body>*,.flavor-card.picked::after{animation:none;opacity:1;transform:none}.olive-wood path{animation:none;stroke-dashoffset:0}.olive-leaf,.olive-fruit{transition:none}}
+
+/* Glass editorial product sheet and a richer cross-menu pairing card. */
+[data-slot=dialog-overlay]{background:rgba(20,45,38,.5)!important;backdrop-filter:blur(17px) saturate(112%)}
+.detail-dialog{
+  border:1px solid rgba(255,255,255,.62)!important;
+  background:linear-gradient(135deg,rgba(253,251,246,.94),rgba(244,246,239,.86))!important;
+  box-shadow:0 34px 110px rgba(18,43,35,.34),inset 0 1px 0 rgba(255,255,255,.88)!important;
+  backdrop-filter:blur(32px) saturate(118%);
+}
+.detail-dialog::before{content:'';position:absolute;z-index:-1;inset:0;background:radial-gradient(circle at 88% 10%,rgba(255,255,255,.72),transparent 34%);pointer-events:none}
+.detail-image{border-right:1px solid rgba(54,82,68,.1);background:linear-gradient(rgba(250,249,242,.74),rgba(244,244,235,.78)),url('/stone-wall.jpg') center/780px auto repeat}
+.detail-body{position:relative;background:linear-gradient(145deg,rgba(255,255,255,.35),rgba(239,244,237,.2))}
+.detail-category{color:#6a8073}
+.detail-title{text-wrap:balance;text-shadow:0 1px 0 rgba(255,255,255,.85)}
+.dialog-dismiss{border-color:rgba(73,102,86,.17);background:rgba(250,251,246,.68);box-shadow:0 7px 24px rgba(33,61,48,.09);backdrop-filter:blur(14px)}
+.detail-traits{border-color:rgba(66,94,78,.14)}
+.detail-traits>div+div{border-color:rgba(66,94,78,.14)}
+.detail-pairing{
+  position:relative;isolation:isolate;display:grid;grid-template-columns:minmax(0,1fr) 44px;align-items:center;gap:18px;
+  min-height:148px;margin-top:auto;padding:20px 20px 18px 22px;border:1px solid rgba(255,255,255,.16);border-radius:14px;
+  overflow:hidden;background:linear-gradient(135deg,rgba(26,70,57,.96),rgba(22,57,48,.88));
+  box-shadow:0 18px 38px rgba(24,58,48,.2),inset 0 1px 0 rgba(255,255,255,.12);backdrop-filter:blur(18px);color:#f2f5ed;
+}
+.detail-pairing::before{content:'';position:absolute;z-index:-1;width:190px;height:190px;right:-74px;top:-108px;border:1px solid rgba(255,255,255,.1);border-radius:50%;box-shadow:0 0 0 38px rgba(255,255,255,.035),0 0 0 76px rgba(255,255,255,.025)}
+.detail-pairing::after{content:'';position:absolute;z-index:-1;inset:0;background:linear-gradient(115deg,transparent 38%,rgba(255,255,255,.07),transparent 64%);transform:translateX(-120%);transition:transform .7s cubic-bezier(.2,.75,.2,1)}
+.detail-pairing:hover{background:linear-gradient(135deg,rgba(31,80,65,.98),rgba(24,65,53,.92));transform:translateY(-2px)}
+.detail-pairing:hover::after{transform:translateX(120%)}
+.pairing-copy{display:flex;flex-direction:column;align-items:flex-start;min-width:0;text-align:left}
+.pairing-eyebrow{color:#b7cdbd;font-size:8px;font-weight:700;letter-spacing:.17em;line-height:1.4;text-transform:uppercase}
+.pairing-name{margin-top:7px;color:#fff;font:italic 27px/1.05 Iowan Old Style,Baskerville,Georgia,serif;letter-spacing:-.02em}
+.pairing-note{display:-webkit-box;max-width:47ch;margin-top:8px;overflow:hidden;color:rgba(235,242,234,.74);font-size:11px;line-height:1.45;-webkit-box-orient:vertical;-webkit-line-clamp:2}
+.pairing-price{margin-top:10px;color:#d8e5da;font:500 12px/1 Arial,sans-serif}
+.pairing-arrow{display:grid;place-items:center;width:42px;height:42px;border:1px solid rgba(255,255,255,.23);border-radius:50%;background:rgba(255,255,255,.09);color:#fff;transition:transform .24s ease,background-color .24s ease}
+.detail-pairing:hover .pairing-arrow{transform:translate(2px,-2px);background:rgba(255,255,255,.16)}
+.detail-pairing .pairing-name svg{display:none}
+
+@media(max-width:600px){
+  .detail-dialog{background:linear-gradient(155deg,rgba(253,251,246,.97),rgba(240,244,237,.93))!important;backdrop-filter:blur(24px)}
+  .detail-image{border-right:0;border-bottom:1px solid rgba(54,82,68,.1)}
+  .detail-body{min-height:57dvh}
+  .detail-pairing{grid-template-columns:minmax(0,1fr) 40px;min-height:136px;padding:18px 17px 17px;margin-top:8px;border-radius:12px}
+  .pairing-name{font-size:24px}.pairing-note{font-size:10.5px}.pairing-arrow{width:38px;height:38px}
+}

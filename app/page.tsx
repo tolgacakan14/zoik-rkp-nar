@@ -5,7 +5,7 @@ import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle } fr
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import menu from '@/data/menu.json';
 import { hookahFlavors, type HookahFlavor } from '@/data/hookah';
-import { pairingByCategory, productPresentation } from '@/data/productPresentation';
+import { pairingGuides, productPresentation } from '@/data/productPresentation';
 const HookahEducation3D = lazy(() => import('@/components/HookahEducation3D').then(module => ({ default: module.HookahEducation3D })));
 type Item = (typeof menu.groups)[number]['items'][number] & { category: string };
 const sections = [
@@ -23,6 +23,36 @@ const heroBulbs: Array<[number, number, number]> = [
   [188.8, 167.5, 26], [220.0, 168.0, 60], [251.2, 167.5, 28], [286.3, 165.9, 56],
   [321.4, 163.1, 32], [352.6, 159.7, 50], [383.8, 155.3, 36],
 ];
+const oliveLeaves: Array<[number, number, number, number]> = [
+  [42,274,-38,.04],[31,254,-62,.09],[51,238,-22,.14],[25,222,-50,.19],
+  [49,205,-16,.24],[20,188,-48,.29],[47,170,-9,.34],[29,151,-42,.39],
+  [57,137,-4,.44],[42,119,-33,.49],[66,103,12,.54],[57,84,-20,.59],
+  [88,257,35,.12],[104,237,57,.17],[86,218,21,.22],[116,201,51,.27],
+  [91,183,17,.32],[122,164,49,.37],[94,147,14,.42],[119,126,42,.47],
+  [91,111,12,.52],[107,89,37,.57],[77,72,-8,.64],[86,52,20,.72],
+];
+function OliveTree({ side }: { side: 'left' | 'right' }) {
+  return <svg className={`olive-tree olive-tree-${side}`} viewBox="0 0 145 360" fill="none" aria-hidden="true">
+    <g className="olive-wood">
+      <path className="olive-trunk" pathLength={1} d="M75 359 C72 324 65 295 70 262 C76 224 67 197 72 164 C76 138 70 112 76 76 C79 61 79 45 77 28"/>
+      <path pathLength={1} d="M70 302 C54 284 42 269 31 246 C27 237 24 228 22 216"/>
+      <path pathLength={1} d="M69 267 C49 246 42 225 42 199 C41 185 36 169 28 153"/>
+      <path pathLength={1} d="M70 226 C53 209 49 191 49 171 C48 153 42 139 35 123"/>
+      <path pathLength={1} d="M71 183 C57 166 58 145 60 125 C61 107 58 93 52 80"/>
+      <path pathLength={1} d="M72 286 C89 266 100 246 105 222 C108 210 113 199 121 188"/>
+      <path pathLength={1} d="M71 247 C91 229 94 207 94 184 C95 168 102 150 116 133"/>
+      <path pathLength={1} d="M73 205 C89 187 90 168 88 149 C87 132 94 114 108 96"/>
+      <path pathLength={1} d="M74 160 C86 144 87 126 84 108 C82 93 87 76 98 59"/>
+      <path pathLength={1} d="M75 112 C68 96 69 77 76 59 C81 47 84 37 83 23"/>
+    </g>
+    <g className="olive-crown">
+      {oliveLeaves.map(([x,y,rotation,reveal],index)=><g key={index} transform={`translate(${x} ${y}) rotate(${rotation})`}><ellipse className="olive-leaf" cx="0" cy="0" rx="3.3" ry="9.6" style={{'--leaf-at':reveal} as CSSProperties}/></g>)}
+      <circle className="olive-fruit" cx="45" cy="211" r="3.2" style={{'--leaf-at':.72} as CSSProperties}/>
+      <circle className="olive-fruit" cx="96" cy="174" r="3.1" style={{'--leaf-at':.78} as CSSProperties}/>
+      <circle className="olive-fruit" cx="60" cy="108" r="2.8" style={{'--leaf-at':.84} as CSSProperties}/>
+    </g>
+  </svg>;
+}
 function ProductImage({ item }: { item: Item }) {
   const [failed, setFailed] = useState(false);
   return item.image && !failed ? <img src={item.image} alt={item.name} loading="lazy" onError={() => setFailed(true)} /> : <div className="image-absent" aria-label="Ürün fotoğrafı bulunmuyor"><Coffee size={30} strokeWidth={1} /><span>zoi</span></div>;
@@ -43,6 +73,7 @@ export default function Home() {
   const [aromaStatus,setAromaStatus]=useState('Love 66 seçildi');
   const [selectedAromaIds,setSelectedAromaIds]=useState<string[]>(['love-66']);
   const [focusedAromaId,setFocusedAromaId]=useState('love-66');
+  const heroRef=useRef<HTMLElement|null>(null);
   const activeSection=sections.find(entry=>entry.name===section)!;
   const normalized=query.trim().toLocaleLowerCase('tr-TR');
   const results=useMemo(()=>menu.groups.filter(group=>normalized||group.category===category).flatMap(group=>group.items.map(item=>({...item,category:group.category}))).filter(item=>!normalized||[item.name,item.description,item.category].join(' ').toLocaleLowerCase('tr-TR').includes(normalized)),[category,normalized]);
@@ -53,14 +84,32 @@ export default function Home() {
     observer.observe(loadMoreRef.current);
     return ()=>observer.disconnect();
   },[visibleCount,results.length,category,normalized,view]);
+  useEffect(()=>{
+    const hero=heroRef.current;
+    if(!hero)return;
+    const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
+    let frame=0;
+    const update=()=>{
+      frame=0;
+      const distance=Math.max(hero.offsetHeight*.72,1);
+      const progress=reducedMotion.matches?1:Math.min(1,Math.max(0,-hero.getBoundingClientRect().top/distance));
+      hero.style.setProperty('--olive-progress',progress.toFixed(3));
+    };
+    const schedule=()=>{if(!frame)frame=window.requestAnimationFrame(update);};
+    update();
+    window.addEventListener('scroll',schedule,{passive:true});
+    window.addEventListener('resize',schedule);
+    reducedMotion.addEventListener?.('change',schedule);
+    return ()=>{window.removeEventListener('scroll',schedule);window.removeEventListener('resize',schedule);reducedMotion.removeEventListener?.('change',schedule);if(frame)window.cancelAnimationFrame(frame);};
+  },[]);
   const selectedAromas=selectedAromaIds.map(id=>hookahFlavors.find(flavor=>flavor.id===id)).filter((flavor):flavor is HookahFlavor=>Boolean(flavor));
   const focusedAroma=selectedAromas.find(flavor=>flavor.id===focusedAromaId)||selectedAromas.at(-1);
   const visibleAromas=hookahFlavors.filter(flavor=>flavor.line===hookahLine&&flavor.name.toLocaleLowerCase('tr-TR').includes(hookahQuery.toLocaleLowerCase('tr-TR')));
   const selectedPresentation=selected?productPresentation[selected.id]:undefined;
   const detailIntro=selected?.description&&!selected.description.startsWith('İçerik bilgisi')?selected.description:selectedPresentation?.intro;
-  const pairIds=selected?pairingByCategory[selected.category]:undefined;
-  const pairId=selected&&pairIds?.length?pairIds[(Number(selected.id)-1)%pairIds.length]:undefined;
-  const pairedProduct=pairId?menu.groups.flatMap(group=>group.items.map(item=>({...item,category:group.category}))).find(item=>item.id===pairId):undefined;
+  const pairingOptions=selected?pairingGuides[selected.category]:undefined;
+  const pairingGuide=selected&&pairingOptions?.length?pairingOptions[(Number(selected.id)-1)%pairingOptions.length]:undefined;
+  const pairedProduct=pairingGuide?menu.groups.flatMap(group=>group.items.map(item=>({...item,category:group.category}))).find(item=>item.id===pairingGuide.productId):undefined;
   const selectedCategoryItems=selected?menu.groups.find(group=>group.category===selected.category)?.items.map(item=>({...item,category:selected.category}))||[]:[];
   const selectedIndex=selected?selectedCategoryItems.findIndex(item=>item.id===selected.id):-1;
   const previousProduct=selectedIndex>=0?selectedCategoryItems[(selectedIndex-1+selectedCategoryItems.length)%selectedCategoryItems.length]:undefined;
@@ -75,7 +124,9 @@ export default function Home() {
     {/* Hand-drawn line-art hero: no photo, a light illustration of the storefront
         (roofline, treetop, hanging garland) with the wordmark drawn in the same
         broken-ring style as the sign, and the cafe name typed on in sequence. */}
-    <section className="hero" aria-label="Zoi Kırkpınar">
+    <section className="hero" aria-label="Zoi Kırkpınar" ref={heroRef}>
+      <OliveTree side="left"/>
+      <OliveTree side="right"/>
       <svg className="hero-line-art" viewBox="0 0 440 300" fill="none" aria-hidden="true">
         <path className="la-line la-roof-ghost" pathLength={1} d="M18,152 L220,53 L422,152" />
         <path className="la-line la-roof" pathLength={1} d="M20,150 L220,55 L420,150" />
@@ -137,14 +188,17 @@ export default function Home() {
     <Dialog open={Boolean(selected)} onOpenChange={open=>{if(!open)setSelected(null)}}>
       <DialogContent className="detail-dialog" showCloseButton={false}>{selected&&<>
         <DialogClose className="dialog-dismiss" aria-label="Ürün detayını kapat">Kapat <X size={17}/></DialogClose>
-        <div className="detail-image"><span className="detail-visual-word" aria-hidden="true">zoi</span><ProductImage item={selected}/><span className="detail-visual-index">ZOI · KIRKPINAR</span><div className="detail-navigation" aria-label="Kategori ürünleri"><button onClick={()=>previousProduct&&setSelected(previousProduct)} aria-label="Önceki ürün"><ChevronLeft size={17}/></button><span>{selectedIndex+1} / {selectedCategoryItems.length}</span><button onClick={()=>nextProduct&&setSelected(nextProduct)} aria-label="Sonraki ürün"><ChevronRight size={17}/></button></div></div>
-        <div className="detail-body">
+        <div className="detail-image"><span className="detail-visual-word" aria-hidden="true">zoi</span><ProductImage key={selected.id} item={selected}/><span className="detail-visual-index">ZOI · KIRKPINAR</span><div className="detail-navigation" aria-label="Kategori ürünleri"><button onClick={()=>previousProduct&&setSelected(previousProduct)} aria-label="Önceki ürün"><ChevronLeft size={17}/></button><span>{selectedIndex+1} / {selectedCategoryItems.length}</span><button onClick={()=>nextProduct&&setSelected(nextProduct)} aria-label="Sonraki ürün"><ChevronRight size={17}/></button></div></div>
+        <div className="detail-body" key={selected.id}>
           <span className="detail-category">ZOI SEÇKİSİ <i/> {selected.category}</span>
           <DialogTitle className="detail-title">{selected.name}</DialogTitle>
           {detailIntro&&<DialogDescription className="detail-description">{detailIntro}</DialogDescription>}
           <div className="detail-traits"><div><small>KARAKTER</small><strong>{selectedPresentation?.character||notes[selected.category]||selected.category}</strong></div>{selectedPresentation?.intensity&&<div><small>YOĞUNLUK</small><span className="detail-intensity" aria-label={`${selectedPresentation.intensity} / 4`}>{[1,2,3,4].map(level=><i key={level} className={level<=selectedPresentation.intensity!?'filled':''}/>)}</span></div>}</div>
           <div className="detail-bottom"><strong>{selected.price.toLocaleString('tr-TR')} <span>₺</span></strong><DialogClose className="back-to-menu">Menüye dön <ArrowUpRight size={16}/></DialogClose></div>
-          {pairedProduct&&<button className="detail-pairing" onClick={()=>setSelected(pairedProduct)}><span className="pairing-eyebrow">BUNUNLA İYİ GİDER</span><span className="pairing-name">{pairedProduct.name} <ArrowUpRight size={19}/></span><span className="pairing-price">{pairedProduct.price.toLocaleString('tr-TR')} ₺</span></button>}
+          {pairedProduct&&pairingGuide&&<button className="detail-pairing" onClick={()=>setSelected(pairedProduct)} aria-label={`${pairedProduct.name} önerisini aç`}>
+            <span className="pairing-copy"><span className="pairing-eyebrow">BUNUNLA İYİ GİDER · {pairedProduct.category}</span><span className="pairing-name">{pairedProduct.name}</span><span className="pairing-note">{pairingGuide.note}</span><span className="pairing-price">{pairedProduct.price.toLocaleString('tr-TR')} ₺</span></span>
+            <span className="pairing-arrow"><ArrowUpRight size={18}/></span>
+          </button>}
         </div>
       </>}</DialogContent>
     </Dialog>
