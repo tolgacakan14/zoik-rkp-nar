@@ -1,514 +1,204 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 
-type HookahProps = { accents: string[]; darkLine?: boolean; onDetailChange?: (open: boolean) => void };
-type LiveState = {
-  water: THREE.MeshPhysicalMaterial | null;
-  aromaPieces: THREE.Mesh[];
-  targetColors: THREE.Color[];
-  coals: THREE.Mesh[];
-  coalGlow: THREE.PointLight | null;
-  smoke: THREE.Sprite[];
-  smokeBase: THREE.Color;
-};
+type Props = { accents: string[]; darkLine?: boolean; onDetailChange?: (open: boolean) => void };
+type LiveState = { aromaLayers: THREE.Mesh[]; targetColors: THREE.Color[]; smoke: THREE.Sprite[]; smokeBase: THREE.Color };
+const neutral = new THREE.Color('#9ca8a2');
 
-const neutral = new THREE.Color('#9eb3ad');
+function roundedRectangle(width: number, depth: number, radius: number) {
+  const x = -width / 2, y = -depth / 2;
+  const shape = new THREE.Shape();
+  shape.moveTo(x + radius, y); shape.lineTo(x + width - radius, y);
+  shape.quadraticCurveTo(x + width, y, x + width, y + radius);
+  shape.lineTo(x + width, y + depth - radius);
+  shape.quadraticCurveTo(x + width, y + depth, x + width - radius, y + depth);
+  shape.lineTo(x + radius, y + depth);
+  shape.quadraticCurveTo(x, y + depth, x, y + depth - radius);
+  shape.lineTo(x, y + radius); shape.quadraticCurveTo(x, y, x + radius, y);
+  return shape;
+}
 
-export function HookahEducation3D({ accents, darkLine = false, onDetailChange }: HookahProps) {
+function textTexture(text: string, color: string, wide = false) {
+  const canvas = document.createElement('canvas');
+  canvas.width = wide ? 1024 : 512; canvas.height = 256;
+  const context = canvas.getContext('2d');
+  if (context) {
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    context.fillStyle = color; context.textAlign = 'center'; context.textBaseline = 'middle';
+    context.font = `${wide ? 52 : 78}px "Helvetica Neue", Arial, sans-serif`;
+    context.fillText(text, canvas.width / 2, canvas.height / 2);
+  }
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  return texture;
+}
+
+export function HookahEducation3D({ accents, darkLine = false, onDetailChange }: Props) {
   const hostRef = useRef<HTMLDivElement>(null);
-  const live = useRef<LiveState>({
-    water: null, aromaPieces: [], targetColors: [],
-    coals: [], coalGlow: null, smoke: [], smokeBase: new THREE.Color('#9aa8a0'),
-  });
+  const controlsRef = useRef({ zoomIn: () => {}, zoomOut: () => {}, reset: () => {} });
+  const [zoomLabel, setZoomLabel] = useState(100);
+  const live = useRef<LiveState>({ aromaLayers: [], targetColors: [], smoke: [], smokeBase: new THREE.Color('#c9ceca') });
+  live.current.targetColors = accents.map(value => new THREE.Color(value));
 
   useEffect(() => {
     const host = hostRef.current;
     if (!host) return;
-
+    live.current.targetColors = accents.map(value => new THREE.Color(value));
+    const mobile = matchMedia('(max-width: 700px), (pointer: coarse)').matches;
+    const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(25, 1, 0.1, 40);
-    camera.position.set(0.12, 2.3, 11.2);
-    camera.lookAt(0, 2.25, 0);
-
+    const camera = new THREE.PerspectiveCamera(27, 1, .1, 40);
+    camera.position.set(0, 1.25, 8.6);
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
-    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(devicePixelRatio, mobile ? 1.5 : 2));
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = darkLine ? 1.18 : 1.08;
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFShadowMap;
+    renderer.domElement.setAttribute('aria-hidden', 'true');
     host.appendChild(renderer.domElement);
 
-    // Broad studio softboxes give the metal and glass shaped reflections.
     const environmentCanvas = document.createElement('canvas');
-    environmentCanvas.width = 1024;
-    environmentCanvas.height = 512;
-    const environmentContext = environmentCanvas.getContext('2d');
-    if (environmentContext) {
-      const gradient = environmentContext.createLinearGradient(0, 0, 0, 512);
-      gradient.addColorStop(0, '#ded9d2');
-      gradient.addColorStop(0.48, '#a39c96');
-      gradient.addColorStop(1, '#494947');
-      environmentContext.fillStyle = gradient;
-      environmentContext.fillRect(0, 0, 1024, 512);
-      for (const [x, y, width, height, opacity] of [
-        [80, 70, 115, 260, 0.96], [415, 34, 175, 310, 0.9],
-        [744, 90, 88, 240, 0.78], [925, 54, 30, 280, 0.7],
-      ]) {
-        environmentContext.fillStyle = `rgba(255,250,240,${opacity})`;
-        environmentContext.fillRect(x, y, width, height);
-      }
+    environmentCanvas.width = 1024; environmentCanvas.height = 512;
+    const context = environmentCanvas.getContext('2d');
+    if (context) {
+      const gradient = context.createLinearGradient(0, 0, 0, 512);
+      gradient.addColorStop(0, '#f2eee7'); gradient.addColorStop(.48, '#a7a19a'); gradient.addColorStop(1, '#484a47');
+      context.fillStyle = gradient; context.fillRect(0, 0, 1024, 512);
+      [[72,42,135,330],[392,22,210,350],[748,62,96,300],[928,38,38,340]].forEach(([x,y,w,h], i) => {
+        context.fillStyle = `rgba(255,252,245,${.94 - i * .08})`; context.fillRect(x,y,w,h);
+      });
     }
     const environmentTexture = new THREE.CanvasTexture(environmentCanvas);
-    environmentTexture.mapping = THREE.EquirectangularReflectionMapping;
-    environmentTexture.colorSpace = THREE.SRGBColorSpace;
+    environmentTexture.mapping = THREE.EquirectangularReflectionMapping; environmentTexture.colorSpace = THREE.SRGBColorSpace;
     const pmrem = new THREE.PMREMGenerator(renderer);
     const environment = pmrem.fromEquirectangular(environmentTexture);
     scene.environment = environment.texture;
 
     const model = new THREE.Group();
-    model.position.set(-0.24, -0.08, 0);
-    model.rotation.y = -0.3;
-    scene.add(model);
+    model.position.set(0, -1.28, 0); model.rotation.y = -.18; scene.add(model);
+    const brushedSteel = new THREE.MeshPhysicalMaterial({ color: darkLine ? 0x817c75 : 0x9a9186, metalness: .92, roughness: .31, clearcoat: .12, clearcoatRoughness: .38, envMapIntensity: 1.15 });
+    const edgeSteel = new THREE.MeshPhysicalMaterial({ color: 0x696560, metalness: .96, roughness: .2, clearcoat: .22, envMapIntensity: 1.35 });
+    const blackMetal = new THREE.MeshPhysicalMaterial({ color: 0x151817, metalness: .32, roughness: .61, clearcoat: .1 });
+    const rubber = new THREE.MeshPhysicalMaterial({ color: 0x101211, roughness: .8, clearcoat: .05 });
+    const recess = new THREE.MeshStandardMaterial({ color: 0x252724, metalness: .5, roughness: .62 });
+    const amberGlass = new THREE.MeshPhysicalMaterial({ color: 0xd5d8d5, roughness: .09, transmission: .62, transparent: true, opacity: .3, thickness: .14, clearcoat: .38, side: THREE.DoubleSide });
+    const add = (mesh: THREE.Mesh, parent: THREE.Object3D = model) => { mesh.castShadow = true; mesh.receiveShadow = true; parent.add(mesh); return mesh };
+    const cylinder = (top:number,bottom:number,height:number,material:THREE.Material,segments=48) => new THREE.Mesh(new THREE.CylinderGeometry(top,bottom,height,segments),material);
+    const torus = (radius:number,tube:number,material:THREE.Material,radial=12,tubular=64) => new THREE.Mesh(new THREE.TorusGeometry(radius,tube,radial,tubular),material);
 
-    const steel = new THREE.MeshPhysicalMaterial({ color: darkLine ? 0x343437 : 0x575257, metalness: 0.88, roughness: 0.19, clearcoat: 0.35, envMapIntensity: 1.15 });
-    const polished = new THREE.MeshPhysicalMaterial({ color: darkLine ? 0x9f9998 : 0xb7a69d, metalness: 0.9, roughness: 0.1, clearcoat: 0.55, envMapIntensity: 1.45 });
-    const rubber = new THREE.MeshPhysicalMaterial({ color: 0x121414, roughness: 0.38, clearcoat: 0.25 });
-    const ceramic = new THREE.MeshPhysicalMaterial({ color: 0x393031, roughness: 0.22, clearcoat: 0.7 });
-    const glass = new THREE.MeshPhysicalMaterial({
-      color: darkLine ? 0x443035 : 0x76565a,
-      metalness: 0,
-      roughness: 0.055,
-      transmission: 0.74,
-      transparent: true,
-      opacity: 0.68,
-      thickness: 0.38,
-      ior: 1.47,
-      clearcoat: 0.65,
-      clearcoatRoughness: 0.025,
-      envMapIntensity: 1.3,
-      side: THREE.DoubleSide,
+    // MR. EDS station platform from the venue references.
+    const baseGeometry = new THREE.ExtrudeGeometry(roundedRectangle(3.62,2.24,.24), { depth:.25, bevelEnabled:true, bevelSegments:3, bevelSize:.055, bevelThickness:.055, curveSegments:8 });
+    baseGeometry.rotateX(-Math.PI/2);
+    const base = add(new THREE.Mesh(baseGeometry,brushedSteel)); base.position.y=.02;
+    const insetGeometry = new THREE.ExtrudeGeometry(roundedRectangle(3.38,2.02,.17), { depth:.035, bevelEnabled:true, bevelSegments:2, bevelSize:.025, bevelThickness:.016 });
+    insetGeometry.rotateX(-Math.PI/2);
+    const inset = add(new THREE.Mesh(insetGeometry,edgeSteel)); inset.position.y=.31;
+    [[-1.53,-.86],[1.53,-.86],[-1.53,.86],[1.53,.86]].forEach(([x,z]) => {
+      const screw=add(cylinder(.055,.055,.025,edgeSteel,24)); screw.position.set(x,.375,z);
+      const slot=add(new THREE.Mesh(new THREE.BoxGeometry(.065,.009,.012),recess)); slot.position.set(x,.391,z);
     });
-    const water = new THREE.MeshPhysicalMaterial({ color: neutral, roughness: 0.08, transmission: 0.12, transparent: true, opacity: 0.52, clearcoat: 0.5 });
-    live.current.water = water;
 
-    const cylinder = (top:number, bottom:number, height:number, y:number, material:THREE.Material, segments=72) => {
-      const mesh = new THREE.Mesh(new THREE.CylinderGeometry(top, bottom, height, segments), material);
-      mesh.position.y = y;
-      mesh.castShadow = true;
-      mesh.receiveShadow = true;
-      model.add(mesh);
-      return mesh;
-    };
-    const ring = (radius:number, tube:number, y:number, material:THREE.Material) => {
-      const mesh = new THREE.Mesh(new THREE.TorusGeometry(radius, tube, 12, 72), material);
-      mesh.rotation.x = Math.PI / 2;
-      mesh.position.y = y;
-      mesh.castShadow = true;
-      model.add(mesh);
-      return mesh;
-    };
+    const grilleWell=add(cylinder(.57,.57,.025,recess,72)); grilleWell.position.set(-.82,.38,.05);
+    for(let i=-5;i<=5;i+=1){const half=Math.sqrt(Math.max(0,.49**2-(i*.078)**2));const rib=add(new THREE.Mesh(new THREE.BoxGeometry(half*2,.018,.033),edgeSteel));rib.position.set(-.82,.407,.05+i*.078)}
+    const grilleRing=add(torus(.58,.035,brushedSteel)); grilleRing.rotation.x=Math.PI/2; grilleRing.position.set(-.82,.414,.05);
 
-    // A tall, flared smoked-glass vase with a heavy foot and narrow neck.
-    const vaseControl = [
-      new THREE.Vector3(.51,.025,0),new THREE.Vector3(.73,.04,0),new THREE.Vector3(.83,.11,0),
-      new THREE.Vector3(.79,.2,0),new THREE.Vector3(.61,.48,0),new THREE.Vector3(.44,.85,0),
-      new THREE.Vector3(.35,1.18,0),new THREE.Vector3(.29,1.49,0),new THREE.Vector3(.29,1.66,0),
-    ];
-    const vaseSpline = new THREE.CatmullRomCurve3(vaseControl, false, 'centripetal');
-    const vaseProfile = vaseSpline.getPoints(80).map(point => new THREE.Vector2(point.x, point.y));
-    const vase = new THREE.Mesh(new THREE.LatheGeometry(vaseProfile, 128), glass);
-    vase.castShadow = true;
-    vase.receiveShadow = true;
-    model.add(vase);
-    ring(.775,.018,.09,polished);
-    ring(.72,.011,.17,steel);
-    ring(.295,.018,1.64,polished);
-    const waterBody = new THREE.Mesh(new THREE.CylinderGeometry(.5,.68,.42,72), water);
-    waterBody.position.y = .3;
-    model.add(waterBody);
-    const waterLine = new THREE.Mesh(new THREE.CircleGeometry(.5,72), water);
-    waterLine.rotation.x = -Math.PI/2;
-    waterLine.position.y = .515;
-    model.add(waterLine);
+    const chamber=add(cylinder(.55,.55,1.62,brushedSteel,72)); chamber.position.set(.62,1.18,-.12);
+    const chamberFoot=add(torus(.53,.026,edgeSteel)); chamberFoot.rotation.x=Math.PI/2; chamberFoot.position.set(.62,.385,-.12);
+    const chamberCap=add(cylinder(.57,.55,.1,edgeSteel,72)); chamberCap.position.set(.62,2.01,-.12);
+    const capSeam=add(torus(.555,.018,brushedSteel)); capSeam.rotation.x=Math.PI/2; capSeam.position.set(.62,1.94,-.12);
 
-    // Narrow dark-chrome stem, machined collar and wide polished tray.
-    cylinder(.31,.34,.2,1.68,polished);
-    ring(.33,.022,1.59,steel);
-    // Rubber grommet sealing the stem into the vase neck.
-    const neckGrommet = new THREE.Mesh(new THREE.CylinderGeometry(.155,.175,.16,48), rubber);
-    neckGrommet.position.y = 1.74; neckGrommet.castShadow = true; model.add(neckGrommet);
-    // The downstem carries smoke from the stem down into the water — this was
-    // the missing link that made the body read as unconnected.
-    const downstem = new THREE.Mesh(new THREE.CylinderGeometry(.072,.066,1.42,48), steel);
-    downstem.position.y = 1.06; downstem.castShadow = true; model.add(downstem);
-    const diffuser = new THREE.Mesh(new THREE.CylinderGeometry(.066,.082,.18,48), polished);
-    diffuser.position.y = .3; model.add(diffuser);
-    for (let i = 0; i < 4; i += 1) {
-      const slot = new THREE.Mesh(new THREE.BoxGeometry(.017,.085,.17), steel);
-      const angle = (i / 4) * Math.PI * 2;
-      slot.position.set(Math.cos(angle) * .062, .29, Math.sin(angle) * .062);
-      slot.rotation.y = -angle; model.add(slot);
-    }
-    cylinder(.09,.12,1.72,2.62,steel,72);
-    cylinder(.13,.17,.2,1.88,polished,72);
-    ring(.16,.018,1.82,steel);
-    ring(.135,.014,2.04,polished);
-    cylinder(.76,.76,.055,3.53,polished,112);
-    ring(.76,.026,3.56,steel);
+    const zoiTexture=textTexture('Z  O  I','rgba(44,43,40,.74)');
+    const zoiMark=new THREE.Mesh(new THREE.PlaneGeometry(.4,.78),new THREE.MeshBasicMaterial({map:zoiTexture,transparent:true,depthWrite:false,toneMapped:false}));
+    zoiMark.position.set(.62,1.13,.437); zoiMark.rotation.z=Math.PI/2; model.add(zoiMark);
+    const baseLabelTexture=textTexture('IRONMAN  PRO  X  MAX','rgba(35,35,32,.68)',true);
+    const baseLabel=new THREE.Mesh(new THREE.PlaneGeometry(1.26,.23),new THREE.MeshBasicMaterial({map:baseLabelTexture,transparent:true,depthWrite:false,toneMapped:false}));
+    baseLabel.rotation.x=-Math.PI/2; baseLabel.position.set(.67,.424,.74); model.add(baseLabel);
 
-    // One continuous hose runs from the stem socket to a handle that rests
-    // lifted above the vase, mouthpiece angled up rather than trailing to the floor.
-    const port=new THREE.Group();
-    port.position.set(.18,1.92,.08); port.rotation.z=-Math.PI/2;
-    const portCore=new THREE.Mesh(new THREE.CylinderGeometry(.11,.15,.34,48),polished);
-    portCore.castShadow=true; port.add(portCore);
-    for(let i=0;i<4;i+=1){
-      const rib=new THREE.Mesh(new THREE.TorusGeometry(.125,.014,10,48),steel);
-      rib.rotation.x=Math.PI/2; rib.position.y=-.1+i*.065; port.add(rib);
-    }
-    model.add(port);
-    // Rubber grommet seats the hose into the port so the joint reads as sealed.
-    const portGrommet = new THREE.Mesh(new THREE.CylinderGeometry(.098,.112,.13,48), rubber);
-    portGrommet.position.set(.3,1.92,.08); portGrommet.rotation.z=-Math.PI/2;
-    portGrommet.castShadow=true; model.add(portGrommet);
-    const socketTube=new THREE.Mesh(new THREE.CylinderGeometry(.076,.076,.26,48),steel);
-    socketTube.position.set(.42,1.92,.08);
-    socketTube.rotation.z=-Math.PI/2;
-    socketTube.castShadow=true;
-    model.add(socketTube);
+    const neck=add(cylinder(.25,.3,.28,blackMetal,56)); neck.position.set(.62,2.23,-.12);
+    const neckCollar=add(cylinder(.32,.35,.11,edgeSteel,64)); neckCollar.position.set(.62,2.08,-.12);
+    const aromaGlass=add(cylinder(.385,.385,.5,amberGlass,64)); aromaGlass.position.set(.62,2.47,-.12); aromaGlass.visible=false;
+    const aromaLayers:THREE.Mesh[]=[];
+    const aromaConnector=add(cylinder(.245,.245,.45,blackMetal,48)); aromaConnector.position.set(.62,2.575,-.12);
+    for(let i=0;i<3;i+=1){const initialColor=new THREE.Color(accents[i]||neutral);const selected=Boolean(accents[i]);const material=new THREE.MeshStandardMaterial({color:initialColor,roughness:.42,transparent:true,opacity:selected?.96:0,emissive:initialColor.clone(),emissiveIntensity:.24});const layer=add(cylinder(.36,.36,.105,material,56));layer.position.set(.62,2.72-i*.13,-.12);layer.scale.y=selected?1:.001;layer.userData.layer=i;aromaLayers.push(layer)}
+    live.current.aromaLayers=aromaLayers;
+
+    const hmdBody=add(cylinder(.43,.36,.42,blackMetal,64)); hmdBody.position.set(.62,3.01,-.12);
+    for(let i=0;i<4;i+=1){const rib=add(torus(.395+i*.006,.027,blackMetal));rib.rotation.x=Math.PI/2;rib.position.set(.62,2.87+i*.085,-.12)}
+    const guard=add(torus(.47,.035,edgeSteel,12,72)); guard.rotation.x=Math.PI/2; guard.position.set(.62,3.18,-.12);
+    const lid=add(new THREE.Mesh(new THREE.SphereGeometry(.39,64,24,0,Math.PI*2,0,Math.PI/2),blackMetal)); lid.scale.y=.28; lid.position.set(.62,3.2,-.12);
+    for(let i=0;i<7;i+=1){const angle=i/7*Math.PI*2;const vent=add(new THREE.Mesh(new THREE.CapsuleGeometry(.035,.12,4,12),recess));vent.scale.set(1,1,.32);vent.rotation.set(Math.PI/2,0,-angle);vent.position.set(.62+Math.cos(angle)*.2,3.315,-.12+Math.sin(angle)*.2)}
+    const hmdLabelTexture=textTexture('SMOKE GAME','rgba(226,222,211,.9)',true);
+    const hmdLabel=new THREE.Mesh(new THREE.PlaneGeometry(.48,.12),new THREE.MeshBasicMaterial({map:hmdLabelTexture,transparent:true,depthWrite:false,toneMapped:false})); hmdLabel.position.set(.62,2.98,.307); model.add(hmdLabel);
+
+    const socket=add(cylinder(.12,.15,.32,edgeSteel,40)); socket.rotation.z=Math.PI/2; socket.position.set(.01,1.3,-.12);
+    const grommet=add(cylinder(.1,.11,.18,rubber,36)); grommet.rotation.z=Math.PI/2; grommet.position.set(-.19,1.3,-.12);
     const hoseCurve=new THREE.CatmullRomCurve3([
-      new THREE.Vector3(.47,1.92,.08),new THREE.Vector3(.70,2.02,.06),
-      new THREE.Vector3(1.06,2.18,.02),new THREE.Vector3(1.48,2.00,.06),
-      new THREE.Vector3(1.70,1.62,.14),new THREE.Vector3(1.82,1.28,.22),
-      new THREE.Vector3(1.94,1.10,.30),new THREE.Vector3(2.12,1.14,.40),
-    ], false, 'catmullrom', .4);
-    const hoseRadius = .072;
-    const hose=new THREE.Mesh(new THREE.TubeGeometry(hoseCurve,220,hoseRadius,20,false),rubber);
-    hose.castShadow=true; hose.receiveShadow=true; model.add(hose);
-    const socketLip=new THREE.Mesh(new THREE.TorusGeometry(.09,.019,12,48),polished);
-    socketLip.position.set(.34,1.92,.08);
-    socketLip.rotation.y=Math.PI/2;
-    model.add(socketLip);
-    // Wound sleeves hug the first stretch of hose where it leaves the socket.
-    for(let i=0;i<13;i+=1){
-      const t=.02+i*.011;
-      const point=hoseCurve.getPointAt(t);
-      const sleeve=new THREE.Mesh(new THREE.TorusGeometry(hoseRadius+.008,.0075,8,22),polished);
-      sleeve.position.copy(point);
-      sleeve.quaternion.setFromUnitVectors(new THREE.Vector3(0,0,1),hoseCurve.getTangentAt(t).normalize());
-      model.add(sleeve);
-    }
-    // The handle continues along the hose's own end direction so every
-    // fitting sits with zero gap, reading as one connected piece.
-    const hoseEnd = hoseCurve.getPointAt(1);
-    const hoseEndDir = hoseCurve.getTangentAt(1).normalize();
-    const alignToDir = (mesh: THREE.Object3D, dir: THREE.Vector3) => {
-      mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), dir);
-    };
-    const placeOnAxis = (mesh: THREE.Object3D, distanceFromEnd: number) => {
-      mesh.position.copy(hoseEnd.clone().add(hoseEndDir.clone().multiplyScalar(distanceFromEnd)));
-    };
-    const ferrule=new THREE.Mesh(new THREE.CylinderGeometry(.079,.072,.17,40),steel);
-    alignToDir(ferrule, hoseEndDir); placeOnAxis(ferrule, .015);
-    ferrule.castShadow=true; model.add(ferrule);
-    const grip=new THREE.Mesh(new THREE.CylinderGeometry(.079,.068,.4,40),rubber);
-    alignToDir(grip, hoseEndDir); placeOnAxis(grip, .3);
-    grip.castShadow=true; model.add(grip);
-    const gripCollar=new THREE.Mesh(new THREE.TorusGeometry(.07,.011,10,36),polished);
-    gripCollar.quaternion.copy(grip.quaternion); gripCollar.rotateX(Math.PI/2);
-    placeOnAxis(gripCollar, .5);
-    model.add(gripCollar);
-    const mouthpiece=new THREE.Mesh(new THREE.CylinderGeometry(.043,.065,.45,40),polished);
-    alignToDir(mouthpiece, hoseEndDir); placeOnAxis(mouthpiece, .725);
-    mouthpiece.castShadow=true; model.add(mouthpiece);
-    const tipRing=new THREE.Mesh(new THREE.TorusGeometry(.044,.008,10,36),steel);
-    tipRing.quaternion.copy(mouthpiece.quaternion); tipRing.rotateX(Math.PI/2);
-    placeOnAxis(tipRing, .93);
-    model.add(tipRing);
+      new THREE.Vector3(-.27,1.3,-.12),new THREE.Vector3(-.75,1.56,-.23),new THREE.Vector3(-1.62,1.88,-.35),
+      new THREE.Vector3(-2.08,1.36,-.2),new THREE.Vector3(-2.12,.72,.04),new THREE.Vector3(-1.72,.48,.44),
+      new THREE.Vector3(-1.29,.75,.67),new THREE.Vector3(-1.27,.97,.67),
+    ],false,'centripetal');
+    add(new THREE.Mesh(new THREE.TubeGeometry(hoseCurve,mobile?84:120,.078,12,false),rubber));
+    const helixPoints:THREE.Vector3[]=[];
+    for(let i=0;i<=92;i+=1){const t=i/92;const center=hoseCurve.getPointAt(t*.15);const tangent=hoseCurve.getTangentAt(t*.15).normalize();const normal=new THREE.Vector3(0,1,0).cross(tangent).normalize();const binormal=tangent.clone().cross(normal).normalize();const angle=t*Math.PI*18;center.add(normal.multiplyScalar(Math.cos(angle)*.092));center.add(binormal.multiplyScalar(Math.sin(angle)*.092));helixPoints.push(center)}
+    add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(helixPoints),100,.009,6,false),edgeSteel));
 
-    // A shallow metal tray, sculpted ceramic cup and transparent aroma chamber.
-    const trayProfile=[
-      new THREE.Vector2(.09,3.505),new THREE.Vector2(.32,3.5),new THREE.Vector2(.56,3.52),
-      new THREE.Vector2(.72,3.56),new THREE.Vector2(.78,3.6),new THREE.Vector2(.785,3.625),
-    ];
-    const tray=new THREE.Mesh(new THREE.LatheGeometry(trayProfile,112),polished);
-    tray.castShadow=true; model.add(tray);
-    cylinder(.1,.11,.26,3.72,steel);
-    // Rubber grommet where the bowl seats on the stem.
-    const bowlGrommet = new THREE.Mesh(new THREE.CylinderGeometry(.128,.136,.14,48), rubber);
-    bowlGrommet.position.y = 3.86; bowlGrommet.castShadow = true; model.add(bowlGrommet);
-    cylinder(.24,.3,.3,3.96,ceramic,72);
-    ring(.248,.026,4.11,ceramic);
-    const chamberGlass=new THREE.Mesh(new THREE.CylinderGeometry(.255,.26,.41,72,1,true),new THREE.MeshPhysicalMaterial({
-      color:0xd9cbc1,metalness:0,roughness:.08,transmission:.78,transparent:true,opacity:.42,thickness:.18,side:THREE.DoubleSide,
-    }));
-    chamberGlass.position.y=4.31; chamberGlass.renderOrder=2; model.add(chamberGlass);
-    ring(.263,.014,4.52,polished);
+    const holder=add(cylinder(.14,.16,.17,edgeSteel,40)); holder.position.set(-1.27,.48,.67);
+    const handleFerrule=add(cylinder(.105,.09,.2,edgeSteel,40)); handleFerrule.position.set(-1.27,.87,.67);
+    const grip=add(cylinder(.1,.085,.72,rubber,40)); grip.position.set(-1.27,1.31,.67);
+    const gripTop=add(cylinder(.105,.1,.13,edgeSteel,40)); gripTop.position.set(-1.27,1.73,.67);
+    const mouthpiece=add(cylinder(.055,.09,.58,brushedSteel,40)); mouthpiece.position.set(-1.27,2.08,.67);
+    const mouthTip=add(torus(.055,.012,edgeSteel,10,36)); mouthTip.rotation.x=Math.PI/2; mouthTip.position.set(-1.27,2.37,.67);
+    const tongStem=add(new THREE.Mesh(new THREE.BoxGeometry(.055,1.18,.07),edgeSteel)); tongStem.position.set(-.12,.94,.64); tongStem.rotation.z=-.045;
+    const tongJawA=add(new THREE.Mesh(new THREE.BoxGeometry(.05,.38,.055),edgeSteel)); tongJawA.position.set(-.19,1.64,.64); tongJawA.rotation.z=.35;
+    const tongJawB=add(new THREE.Mesh(new THREE.BoxGeometry(.05,.38,.055),edgeSteel)); tongJawB.position.set(-.05,1.64,.64); tongJawB.rotation.z=-.35;
 
-    // Each selected aroma becomes one visible tobacco layer in the bowl,
-    // carrying that aroma's own colour rather than a muddied blend, with a
-    // faint self-glow so the hue stays vivid under the bowl's own shading.
-    const aromaBands:THREE.Mesh[]=[];
-    for(let layer=0;layer<3;layer+=1){
-      const material=new THREE.MeshStandardMaterial({
-        color:neutral,roughness:.82,transparent:true,opacity:1,
-        emissive:new THREE.Color(0x000000),emissiveIntensity:.38,
-      });
-      const band=new THREE.Mesh(new THREE.CylinderGeometry(.211,.215,.1,56),material);
-      band.position.y=4.16+layer*.105;
-      band.scale.set(1,.001,1);
-      band.castShadow=true;
-      band.userData.layer=layer;
-      band.userData.kind='band';
-      model.add(band);
-      aromaBands.push(band);
-    }
+    const smokeCanvas=document.createElement('canvas'); smokeCanvas.width=96; smokeCanvas.height=192;
+    const smokeContext=smokeCanvas.getContext('2d');
+    if(smokeContext){const puff=smokeContext.createRadialGradient(48,105,4,48,96,68);puff.addColorStop(0,'rgba(255,255,255,.72)');puff.addColorStop(.38,'rgba(255,255,255,.26)');puff.addColorStop(1,'rgba(255,255,255,0)');smokeContext.fillStyle=puff;smokeContext.fillRect(0,0,96,192)}
+    const smokeTexture=new THREE.CanvasTexture(smokeCanvas);
+    const smokeBase=darkLine?new THREE.Color('#dbe2dd'):new THREE.Color('#87948d');
+    const smoke:THREE.Sprite[]=[];
+    const smokeCount=mobile?11:15;
+    for(let i=0;i<smokeCount;i+=1){const material=new THREE.SpriteMaterial({map:smokeTexture,color:smokeBase.clone(),transparent:true,opacity:0,depthWrite:false});const sprite=new THREE.Sprite(material);sprite.userData.life=i/smokeCount;sprite.userData.seed=i*2.17+Math.random();sprite.userData.speed=.0027+(i%4)*.00035;scene.add(sprite);smoke.push(sprite)}
+    live.current.smoke=smoke; live.current.smokeBase=smokeBase;
 
-    // Chopped, uneven material builds up in the glass bowl as each aroma is selected.
-    const granules:THREE.Mesh[]=[];
-    for(let layer=0;layer<3;layer+=1){
-      for(let index=0;index<22;index+=1){
-        const angle=index*2.39996+layer*.63;
-        const radius=.2*Math.sqrt((index+.5)/22);
-        const x=Math.cos(angle)*radius;
-        const z=Math.sin(angle)*radius;
-        const size=.039+(index%5)*.004;
-        const material=new THREE.MeshStandardMaterial({
-          color:neutral,roughness:.86,flatShading:true,
-          emissive:new THREE.Color(0x000000),emissiveIntensity:.3,
-        });
-        const piece=new THREE.Mesh(new THREE.IcosahedronGeometry(size,0),material);
-        piece.position.set(x,4.2+layer*.105+(index%4)*.008,z);
-        piece.rotation.set(index*.81,layer+index*.37,index*.53);
-        piece.scale.setScalar(.001);
-        piece.castShadow=true;
-        piece.userData.layer=layer;
-        piece.userData.kind='granule';
-        piece.userData.shade=.88+(index%6)*.045;
-        model.add(piece);
-        granules.push(piece);
-      }
-    }
-    live.current.aromaPieces=[...aromaBands,...granules];
+    const floor=new THREE.Mesh(new THREE.CircleGeometry(2.5,72),new THREE.ShadowMaterial({color:0x263b35,transparent:true,opacity:darkLine?.25:.14}));floor.rotation.x=-Math.PI/2;floor.position.y=-1.28;floor.receiveShadow=true;scene.add(floor);
+    scene.add(new THREE.HemisphereLight(0xffffff,darkLine?0x242b28:0x8b938e,2.2));
+    const key=new THREE.DirectionalLight(0xfff8ed,5.2);key.position.set(4.5,7,5.5);key.castShadow=true;key.shadow.mapSize.set(mobile?512:1024,mobile?512:1024);scene.add(key);
+    const rim=new THREE.DirectionalLight(0xbdd7cf,3.1);rim.position.set(-5,3.5,-3);scene.add(rim);
+    const warm=new THREE.PointLight(0xffc39d,9,11,2);warm.position.set(2.8,1.2,3.5);scene.add(warm);
 
-    // Foil and coals sit on top of the bowl; the smoke rises from between them.
-    const foil = new THREE.Mesh(new THREE.CylinderGeometry(.252,.252,.012,64), new THREE.MeshStandardMaterial({
-      color:0xbfc3c6, metalness:.95, roughness:.34,
-    }));
-    foil.position.y = 4.53; foil.castShadow = true; model.add(foil);
-    const coals: THREE.Mesh[] = [];
-    const coalMaterial = () => new THREE.MeshStandardMaterial({
-      color:0x2f2b28, roughness:.95, flatShading:true,
-      emissive:new THREE.Color(0xff5a1e), emissiveIntensity:.55,
-    });
-    for (let index = 0; index < 3; index += 1) {
-      const angle = (index / 3) * Math.PI * 2 + .4;
-      const coal = new THREE.Mesh(new THREE.BoxGeometry(.115,.088,.115), coalMaterial());
-      coal.position.set(Math.cos(angle) * .125, 4.585, Math.sin(angle) * .125);
-      coal.rotation.set(.12, angle, .08); coal.castShadow = true;
-      coal.userData.phase = index * 2.1;
-      model.add(coal); coals.push(coal);
-    }
-    const coalGlow = new THREE.PointLight(0xff6a24, 0, 2.6, 2);
-    coalGlow.position.set(0, 4.62, 0); model.add(coalGlow);
-    live.current.coals = coals;
-    live.current.coalGlow = coalGlow;
+    let defaultDistance=8.6,targetDistance=defaultDistance,userZoomed=false,targetYaw=model.rotation.y,targetPitch=0,yawVelocity=0,pitchVelocity=0;
+    const minZoom=()=>defaultDistance*.68,maxZoom=()=>defaultDistance*1.28;
+    const reportZoom=()=>{setZoomLabel(Math.round(defaultDistance/targetDistance*100));onDetailChange?.(targetDistance<defaultDistance*.86)};
+    const setDistance=(value:number)=>{targetDistance=THREE.MathUtils.clamp(value,minZoom(),maxZoom());userZoomed=Math.abs(targetDistance-defaultDistance)>.08;reportZoom()};
+    const resetView=()=>{targetYaw=-.18;targetPitch=0;yawVelocity=0;pitchVelocity=0;targetDistance=defaultDistance;userZoomed=false;reportZoom()};
+    controlsRef.current={zoomIn:()=>setDistance(targetDistance*.86),zoomOut:()=>setDistance(targetDistance*1.16),reset:resetView};
+    const resize=()=>{const bounds=host.getBoundingClientRect();const width=Math.max(bounds.width,1),height=Math.max(bounds.height,1);renderer.setSize(width,height,false);camera.aspect=width/height;const next=camera.aspect<.78?13.3:camera.aspect>1.35?8.25:8.65;if(!userZoomed)targetDistance=next;defaultDistance=next;camera.updateProjectionMatrix();reportZoom()};
+    const observer=new ResizeObserver(resize);observer.observe(host);resize();
 
-    // Soft sprite smoke drifting up out of the bowl.
-    const smokeCanvas = document.createElement('canvas');
-    smokeCanvas.width = 128; smokeCanvas.height = 128;
-    const smokeContext = smokeCanvas.getContext('2d');
-    if (smokeContext) {
-      const puff = smokeContext.createRadialGradient(64,64,2,64,64,62);
-      puff.addColorStop(0, 'rgba(255,255,255,0.92)');
-      puff.addColorStop(0.45, 'rgba(255,255,255,0.34)');
-      puff.addColorStop(1, 'rgba(255,255,255,0)');
-      smokeContext.fillStyle = puff; smokeContext.fillRect(0,0,128,128);
-    }
-    const smokeTexture = new THREE.CanvasTexture(smokeCanvas);
-    const smokeBase = darkLine ? new THREE.Color('#e4e9e2') : new THREE.Color('#9aa8a0');
-    const smoke: THREE.Sprite[] = [];
-    const SMOKE_COUNT = 22;
-    for (let index = 0; index < SMOKE_COUNT; index += 1) {
-      const material = new THREE.SpriteMaterial({ map: smokeTexture, color: smokeBase.clone(), transparent: true, opacity: 0, depthWrite: false });
-      const sprite = new THREE.Sprite(material);
-      sprite.userData.seed = Math.random() * Math.PI * 2;
-      sprite.userData.speed = .0042 + Math.random() * .0038;
-      sprite.userData.drift = (Math.random() - .5) * .0022;
-      sprite.userData.life = index / SMOKE_COUNT;
-      sprite.userData.spin = (Math.random() - .5) * .01;
-      sprite.position.set(0, 4.66, 0);
-      sprite.scale.setScalar(.2);
-      model.add(sprite); smoke.push(sprite);
-    }
-    live.current.smoke = smoke;
-    live.current.smokeBase = smokeBase;
+    const pointers=new Map<number,{x:number;y:number}>();let lastSingle={x:0,y:0},gestureStart={x:0,y:0},pinchDistance=0,pinchCamera=targetDistance,lastTap=0;
+    const pointerGap=()=>{const values=[...pointers.values()];return values.length>1?Math.hypot(values[0].x-values[1].x,values[0].y-values[1].y):0};
+    const onDown=(event:PointerEvent)=>{pointers.set(event.pointerId,{x:event.clientX,y:event.clientY});renderer.domElement.setPointerCapture(event.pointerId);if(pointers.size===1){lastSingle={x:event.clientX,y:event.clientY};gestureStart={...lastSingle};yawVelocity=0;pitchVelocity=0}else if(pointers.size===2){pinchDistance=pointerGap();pinchCamera=targetDistance}};
+    const onMove=(event:PointerEvent)=>{if(!pointers.has(event.pointerId))return;pointers.set(event.pointerId,{x:event.clientX,y:event.clientY});if(pointers.size===2){const gap=pointerGap();if(pinchDistance>0&&gap>0)setDistance(pinchCamera*pinchDistance/gap);return}const dx=event.clientX-lastSingle.x,dy=event.clientY-lastSingle.y;yawVelocity=dx*.007;pitchVelocity=dy*.0035;targetYaw+=yawVelocity;targetPitch=THREE.MathUtils.clamp(targetPitch+pitchVelocity,-.14,.12);lastSingle={x:event.clientX,y:event.clientY}};
+    const onUp=(event:PointerEvent)=>{const point=pointers.get(event.pointerId);pointers.delete(event.pointerId);if(pointers.size===1)lastSingle={...[...pointers.values()][0]};if(point&&Math.hypot(point.x-gestureStart.x,point.y-gestureStart.y)<8){const now=performance.now();if(now-lastTap<320)resetView();lastTap=now}};
+    const onWheel=(event:WheelEvent)=>{event.preventDefault();setDistance(targetDistance*(event.deltaY>0?1.08:.92))};
+    const onKeyDown=(event:KeyboardEvent)=>{if(event.key==='ArrowLeft')targetYaw-=.3;if(event.key==='ArrowRight')targetYaw+=.3;if(event.key==='ArrowUp')targetPitch=THREE.MathUtils.clamp(targetPitch-.07,-.14,.12);if(event.key==='ArrowDown')targetPitch=THREE.MathUtils.clamp(targetPitch+.07,-.14,.12);if(event.key==='+'||event.key==='=')controlsRef.current.zoomIn();if(event.key==='-'||event.key==='_')controlsRef.current.zoomOut();if(event.key==='0'||event.key==='Escape')resetView()};
+    renderer.domElement.style.touchAction='none';renderer.domElement.addEventListener('pointerdown',onDown);renderer.domElement.addEventListener('pointermove',onMove);renderer.domElement.addEventListener('pointerup',onUp);renderer.domElement.addEventListener('pointercancel',onUp);renderer.domElement.addEventListener('wheel',onWheel,{passive:false});host.addEventListener('keydown',onKeyDown);
 
-    const floor=new THREE.Mesh(new THREE.CircleGeometry(2.25,96),new THREE.ShadowMaterial({color:0x173b38,transparent:true,opacity:darkLine ? .25 : .13}));
-    floor.rotation.x=-Math.PI/2; floor.receiveShadow=true; scene.add(floor);
-    scene.add(new THREE.HemisphereLight(0xffffff,darkLine?0x1b2422:0x7d8b86,2.15));
-    const key=new THREE.DirectionalLight(0xfff7ea,5.4);
-    key.position.set(4.5,7,5.5); key.castShadow=true; key.shadow.mapSize.set(1024,1024); scene.add(key);
-    const edge=new THREE.DirectionalLight(0xb8d9d1,3.4); edge.position.set(-5,4,-2); scene.add(edge);
-    const warm=new THREE.PointLight(0xffc7a2,12,12,2); warm.position.set(2.8,1.7,3.5); scene.add(warm);
+    let frame=0,running=true;const scratch=new THREE.Color(),emitter=new THREE.Vector3();
+    const render=()=>{if(!running)return;frame=requestAnimationFrame(render);if(pointers.size===0&&!reduceMotion){yawVelocity*=.92;pitchVelocity*=.86;targetYaw+=yawVelocity;targetPitch=THREE.MathUtils.clamp(targetPitch+pitchVelocity,-.14,.12)}model.rotation.y+=(targetYaw-model.rotation.y)*.09;model.rotation.x+=(targetPitch-model.rotation.x)*.09;camera.position.z=THREE.MathUtils.lerp(camera.position.z,targetDistance,.09);camera.position.y=THREE.MathUtils.lerp(camera.position.y,1.15+(defaultDistance-targetDistance)*.07,.08);camera.lookAt(0,.38,0);
+      const state=live.current;state.aromaLayers.forEach((layer,i)=>{const visible=i<state.targetColors.length;const material=layer.material as THREE.MeshStandardMaterial;layer.scale.y=THREE.MathUtils.lerp(layer.scale.y,visible?1:.001,visible?.13:.18);material.opacity=THREE.MathUtils.lerp(material.opacity,visible?.96:0,.14);scratch.copy(state.targetColors[i]||neutral);material.color.lerp(scratch,.12);material.emissive.lerp(scratch.clone().multiplyScalar(visible?.28:0),.1)});
+      emitter.set(.62,3.22,-.12);model.localToWorld(emitter);const active=state.targetColors.length>0;state.smoke.forEach((sprite,i)=>{const data=sprite.userData;if(!reduceMotion)data.life+=active?data.speed:data.speed*1.8;if(data.life>=1)data.life=0;const life=data.life as number;const offset=(i%3-1)*.08;const curl=Math.sin(life*7.2+data.seed)*(.035+life*.22);sprite.position.set(emitter.x+offset+curl,emitter.y+.03+life*.42,emitter.z+Math.cos(life*6.1+data.seed)*(.025+life*.16));sprite.scale.set(.16+life*.5,.34+life*1.12,1);const fade=Math.min(life/.16,1)*Math.max(0,1-(life-.18)/.82);const material=sprite.material as THREE.SpriteMaterial;material.opacity=THREE.MathUtils.lerp(material.opacity,active?fade*.24:0,.09);if(active){scratch.copy(state.smokeBase).lerp(state.targetColors[state.targetColors.length-1],.045);material.color.lerp(scratch,.045)}});renderer.render(scene,camera)};
+    const onVisibility=()=>{if(document.hidden){running=false;cancelAnimationFrame(frame)}else if(!running){running=true;render()}};document.addEventListener('visibilitychange',onVisibility);render();
 
-    let targetCameraZ=11.9,detailView=false;
-    const fullCameraDistance=()=>camera.aspect>1.35?11.55:camera.aspect<.85?18.8:11.9;
-    const resize=()=>{
-      const bounds=host.getBoundingClientRect();
-      const width=Math.max(bounds.width,1),height=Math.max(bounds.height,1);
-      renderer.setSize(width,height,false); camera.aspect=width/height;
-      if(!detailView) targetCameraZ=fullCameraDistance();
-      camera.position.z=targetCameraZ; camera.updateProjectionMatrix();
-    };
-    const observer=new ResizeObserver(resize); observer.observe(host); resize();
-
-    let dragging=false,pointerX=0,startX=0,startY=0,targetRotation=model.rotation.y,velocity=0;
-    let targetCameraY=2.3,lookY=2.25;
-    const onDown=(event:PointerEvent)=>{
-      dragging=true;pointerX=event.clientX;startX=pointerX;startY=event.clientY;velocity=0;
-      renderer.domElement.setPointerCapture(event.pointerId);
-    };
-    const onCancel=()=>{dragging=false};
-    const onMove=(event:PointerEvent)=>{if(!dragging)return;const delta=(event.clientX-pointerX)*.007;targetRotation+=delta;velocity=delta;pointerX=event.clientX};
-    const toggleDetail=()=>{detailView=!detailView;onDetailChange?.(detailView);targetCameraY=detailView?4.17:2.3;targetCameraZ=detailView?3.45:fullCameraDistance();};
-    const onUp=(event:PointerEvent)=>{dragging=false;if(Math.hypot(event.clientX-startX,event.clientY-startY)<8)toggleDetail();};
-    const onKeyDown=(event:KeyboardEvent)=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleDetail();}if(event.key==='ArrowLeft')targetRotation-=.34;if(event.key==='ArrowRight')targetRotation+=.34;};
-    renderer.domElement.style.touchAction='none';
-    renderer.domElement.addEventListener('pointerdown',onDown); renderer.domElement.addEventListener('pointermove',onMove);
-    renderer.domElement.addEventListener('pointerup',onUp); renderer.domElement.addEventListener('pointercancel',onCancel);
-    host.addEventListener('keydown',onKeyDown);
-
-    const reduceMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
-    let frame=0,clock=0;
-    const scratch=new THREE.Color();
-    const render=()=>{
-      frame=requestAnimationFrame(render);
-      clock+=1;
-      if(!dragging){velocity*=.94;targetRotation+=velocity;if(!reduceMotion)targetRotation+=.00032}
-      model.rotation.y+=(targetRotation-model.rotation.y)*.08;
-      camera.position.y=THREE.MathUtils.lerp(camera.position.y,targetCameraY,.075);
-      camera.position.z=THREE.MathUtils.lerp(camera.position.z,targetCameraZ,.075);
-      lookY=THREE.MathUtils.lerp(lookY,detailView?4.2:2.25,.075);
-      camera.lookAt(0,lookY,0);
-
-      const state=live.current;
-      const colors=state.targetColors;
-      const lit=colors.length>0;
-
-      // Water picks up a light wash of the blend rather than an averaged mud.
-      if (state.water) {
-        if (lit) {
-          scratch.set(0,0,0);
-          colors.forEach(color=>scratch.add(color));
-          scratch.multiplyScalar(1/colors.length);
-          scratch.lerp(new THREE.Color('#e8f1ec'),.52);
-        } else {
-          scratch.copy(neutral);
-        }
-        state.water.color.lerp(scratch,.05);
-      }
-
-      // Each layer takes its own aroma colour at full saturation.
-      state.aromaPieces.forEach(piece=>{
-        const layer=piece.userData.layer as number;
-        const visible=layer<colors.length;
-        if (piece.userData.kind==='band') {
-          const target=visible?1:.001;
-          piece.scale.y=THREE.MathUtils.lerp(piece.scale.y,target,visible?.14:.2);
-          const material=piece.material as THREE.MeshStandardMaterial;
-          material.opacity=THREE.MathUtils.lerp(material.opacity,visible?1:0,.16);
-        } else {
-          const scale=THREE.MathUtils.lerp(piece.scale.x,visible?1:.001,visible?.13:.18);
-          piece.scale.setScalar(scale);
-        }
-        scratch.copy(colors[layer]||neutral);
-        if (visible) scratch.multiplyScalar(piece.userData.shade||1);
-        const material=piece.material as THREE.MeshStandardMaterial;
-        material.color.lerp(scratch,.12);
-        if (material.emissive) {
-          scratch.copy(colors[layer]||neutral).multiplyScalar(visible?.5:0);
-          material.emissive.lerp(scratch,.12);
-        }
-      });
-
-      // Coals breathe while the bowl is packed.
-      state.coals.forEach(coal=>{
-        const material=coal.material as THREE.MeshStandardMaterial;
-        const pulse=lit?.5+Math.sin(clock*.026+coal.userData.phase)*.22:0;
-        material.emissiveIntensity=THREE.MathUtils.lerp(material.emissiveIntensity,pulse,.07);
-      });
-      if (state.coalGlow) {
-        const glow=lit?2.3+Math.sin(clock*.03)*.5:0;
-        state.coalGlow.intensity=THREE.MathUtils.lerp(state.coalGlow.intensity,glow,.06);
-      }
-
-      // Smoke rises, widens and fades, then recycles back into the bowl.
-      state.smoke.forEach(sprite=>{
-        const data=sprite.userData;
-        data.life+=lit?data.speed:data.speed*1.9;
-        if (data.life>=1) {
-          data.life=0;
-          data.seed=Math.random()*Math.PI*2;
-          data.speed=.0042+Math.random()*.0038;
-          data.drift=(Math.random()-.5)*.0022;
-        }
-        const lifeValue=data.life;
-        const wobble=Math.sin(lifeValue*6.1+data.seed);
-        sprite.position.set(
-          wobble*(.05+lifeValue*.3)+data.drift*clock*.08,
-          4.66+lifeValue*2.35,
-          Math.cos(lifeValue*5.3+data.seed)*(.04+lifeValue*.24),
-        );
-        sprite.scale.setScalar(.22+lifeValue*1.05);
-        (sprite.material as THREE.SpriteMaterial).rotation+=data.spin;
-        const curve=Math.min(lifeValue/.16,1)*Math.max(0,1-(lifeValue-.2)/.8);
-        const target=lit?curve*.34:0;
-        const material=sprite.material as THREE.SpriteMaterial;
-        material.opacity=THREE.MathUtils.lerp(material.opacity,target,.1);
-        if (lit && colors.length) {
-          scratch.copy(state.smokeBase).lerp(colors[colors.length-1],.14);
-          material.color.lerp(scratch,.05);
-        }
-      });
-
-      renderer.render(scene,camera);
-    };
-    render();
-
-    return()=>{
-      cancelAnimationFrame(frame); observer.disconnect();
-      renderer.domElement.removeEventListener('pointerdown',onDown); renderer.domElement.removeEventListener('pointermove',onMove);
-      renderer.domElement.removeEventListener('pointerup',onUp); renderer.domElement.removeEventListener('pointercancel',onCancel);
-      host.removeEventListener('keydown',onKeyDown);
-      scene.traverse(object=>{
-        if (object instanceof THREE.Mesh) {
-          object.geometry.dispose();
-          const materials=Array.isArray(object.material)?object.material:[object.material];
-          materials.forEach(material=>material.dispose());
-        } else if (object instanceof THREE.Sprite) {
-          object.material.dispose();
-        }
-      });
-      smokeTexture.dispose();
-      environmentTexture.dispose(); environment.dispose(); pmrem.dispose(); renderer.dispose(); renderer.domElement.remove();
-    };
+    return()=>{running=false;cancelAnimationFrame(frame);observer.disconnect();document.removeEventListener('visibilitychange',onVisibility);renderer.domElement.removeEventListener('pointerdown',onDown);renderer.domElement.removeEventListener('pointermove',onMove);renderer.domElement.removeEventListener('pointerup',onUp);renderer.domElement.removeEventListener('pointercancel',onUp);renderer.domElement.removeEventListener('wheel',onWheel);host.removeEventListener('keydown',onKeyDown);scene.traverse(object=>{if(object instanceof THREE.Mesh){object.geometry.dispose();(Array.isArray(object.material)?object.material:[object.material]).forEach(material=>material.dispose())}else if(object instanceof THREE.Sprite)object.material.dispose()});smokeTexture.dispose();zoiTexture.dispose();baseLabelTexture.dispose();hmdLabelTexture.dispose();environmentTexture.dispose();environment.dispose();pmrem.dispose();renderer.dispose();renderer.domElement.remove()};
   },[darkLine,onDetailChange]);
 
-  useEffect(()=>{
-    // Push each aroma toward a more saturated, better-lit version of itself so
-    // the layers stay vivid once the bowl's own shading knocks them back.
-    const hsl = { h: 0, s: 0, l: 0 };
-    live.current.targetColors = accents.map(value => {
-      const color = new THREE.Color(value);
-      color.getHSL(hsl);
-      color.setHSL(hsl.h, Math.min(1, hsl.s * 1.55 + .12), Math.min(.66, Math.max(hsl.l, .47)));
-      return color;
-    });
-  },[accents.join('|')]);
+  useEffect(()=>{const hsl={h:0,s:0,l:0};live.current.targetColors=accents.map(value=>{const color=new THREE.Color(value);color.getHSL(hsl);color.setHSL(hsl.h,Math.min(1,hsl.s*1.38+.08),Math.min(.64,Math.max(hsl.l,.43)));return color})},[accents.join('|')]);
 
-  return <div ref={hostRef} className="hookah-canvas" role="button" tabIndex={0} aria-label="Üç boyutlu nargileyi çevir; detay görünümü için dokun veya Enter tuşuna bas"/>;
+  return <><div ref={hostRef} className="hookah-canvas" role="group" tabIndex={0} aria-label="Mekanın üç boyutlu nargile modeli. Sürükleyerek çevirin, iki parmakla veya artı eksi tuşlarıyla yakınlaştırın."/><div className="hookah-view-controls" aria-label="3D model görünüm kontrolleri"><button type="button" onClick={()=>controlsRef.current.zoomOut()} aria-label="Uzaklaştır">−</button><button type="button" className="hookah-view-reset" onClick={()=>controlsRef.current.reset()} aria-label="Görünümü sıfırla">{zoomLabel}%</button><button type="button" onClick={()=>controlsRef.current.zoomIn()} aria-label="Yakınlaştır">+</button></div><span className="hookah-a11y-status" aria-live="polite">Model yakınlaştırma oranı yüzde {zoomLabel}</span></>;
 }

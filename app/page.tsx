@@ -207,7 +207,7 @@ export default function Home() {
       <div className={'education-visual '+(hookahLine==='dark'?'dark-visual':'')} style={{'--aroma':focusedAroma?.color||'#6f8980'} as CSSProperties}>
         <img className="zoi-model-emblem" src="/logo.webp" alt="" aria-hidden="true" />
         <Suspense fallback={<div className="hookah-loading">Model hazırlanıyor…</div>}><HookahEducation3D accents={selectedAromas.map(flavor=>flavor.color)} darkLine={hookahLine==='dark'} onDetailChange={setHookahDetail}/></Suspense>
-        <span className="model-mark">{hookahDetail?'Genel görünüm için dokun':'360° · Detay için dokun'}</span>
+        <span className="model-mark">{hookahDetail?'Yakın görünüm':'Sürükle · Yakınlaştır'}</span>
       </div>
       <div className="education-panel builder-panel">
         <div className="builder-heading"><div><DialogTitle className="education-title">Nargileni oluştur</DialogTitle><DialogDescription className="education-intro">En fazla 3 aroma seç.</DialogDescription></div></div>
