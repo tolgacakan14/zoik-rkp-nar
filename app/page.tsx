@@ -157,7 +157,6 @@ export default function Home() {
             <span key={index} style={{'--letter-delay':`${1.5+index*.045}s`} as CSSProperties}>{letter}</span>
           ))}
         </h1>
-        <p className="hero-line">Taş duvarların ve akşam ışıklarının arasında, kendine has bir mola.</p>
       </div>
     </section>
 
@@ -188,7 +187,7 @@ export default function Home() {
     <Dialog open={Boolean(selected)} onOpenChange={open=>{if(!open)setSelected(null)}}>
       <DialogContent className="detail-dialog" showCloseButton={false}>{selected&&<>
         <DialogClose className="dialog-dismiss" aria-label="Ürün detayını kapat">Kapat <X size={17}/></DialogClose>
-        <div className="detail-image"><span className="detail-visual-word" aria-hidden="true">zoi</span><ProductImage key={selected.id} item={selected}/><span className="detail-visual-index">ZOI · KIRKPINAR</span><div className="detail-navigation" aria-label="Kategori ürünleri"><button onClick={()=>previousProduct&&setSelected(previousProduct)} aria-label="Önceki ürün"><ChevronLeft size={17}/></button><span>{selectedIndex+1} / {selectedCategoryItems.length}</span><button onClick={()=>nextProduct&&setSelected(nextProduct)} aria-label="Sonraki ürün"><ChevronRight size={17}/></button></div></div>
+        <div className="detail-image"><ProductImage key={selected.id} item={selected}/><span className="detail-visual-index">ZOI · KIRKPINAR</span><div className="detail-navigation" aria-label="Kategori ürünleri"><button onClick={()=>previousProduct&&setSelected(previousProduct)} aria-label="Önceki ürün"><ChevronLeft size={17}/></button><span>{selectedIndex+1} / {selectedCategoryItems.length}</span><button onClick={()=>nextProduct&&setSelected(nextProduct)} aria-label="Sonraki ürün"><ChevronRight size={17}/></button></div></div>
         <div className="detail-body" key={selected.id}>
           <span className="detail-category">ZOI SEÇKİSİ <i/> {selected.category}</span>
           <DialogTitle className="detail-title">{selected.name}</DialogTitle>
