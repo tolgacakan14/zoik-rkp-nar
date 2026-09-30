@@ -99,6 +99,7 @@ export function HookahEducation3D({ accents, darkLine = false, onDetailChange }:
     [[-1.53,-.86],[1.53,-.86],[-1.53,.86],[1.53,.86]].forEach(([x,z]) => {
       const screw=add(cylinder(.055,.055,.025,edgeSteel,24)); screw.position.set(x,.375,z);
       const slot=add(new THREE.Mesh(new THREE.BoxGeometry(.065,.009,.012),recess)); slot.position.set(x,.391,z);
+      const foot=add(cylinder(.09,.105,.08,rubber,28)); foot.position.set(x,-.025,z);
     });
 
     const grilleWell=add(cylinder(.57,.57,.025,recess,72)); grilleWell.position.set(-.82,.38,.05);
@@ -109,10 +110,15 @@ export function HookahEducation3D({ accents, darkLine = false, onDetailChange }:
     const chamberFoot=add(torus(.53,.026,edgeSteel)); chamberFoot.rotation.x=Math.PI/2; chamberFoot.position.set(.62,.385,-.12);
     const chamberCap=add(cylinder(.57,.55,.1,edgeSteel,72)); chamberCap.position.set(.62,2.01,-.12);
     const capSeam=add(torus(.555,.018,brushedSteel)); capSeam.rotation.x=Math.PI/2; capSeam.position.set(.62,1.94,-.12);
+    const purgeSocket=add(cylinder(.07,.1,.22,edgeSteel,36)); purgeSocket.rotation.z=Math.PI/2; purgeSocket.position.set(1.2,1.65,-.12);
+    const purgeButton=add(cylinder(.055,.07,.09,blackMetal,32)); purgeButton.rotation.z=Math.PI/2; purgeButton.position.set(1.34,1.65,-.12);
 
-    const zoiTexture=textTexture('Z  O  I','rgba(44,43,40,.74)');
-    const zoiMark=new THREE.Mesh(new THREE.PlaneGeometry(.4,.78),new THREE.MeshBasicMaterial({map:zoiTexture,transparent:true,depthWrite:false,toneMapped:false}));
-    zoiMark.position.set(.62,1.13,.437); zoiMark.rotation.z=Math.PI/2; model.add(zoiMark);
+    // Use the actual brand artwork as a restrained laser etching, rather than
+    // approximating the wordmark with a system font.
+    const zoiTexture=new THREE.TextureLoader().load('/logo.webp');
+    zoiTexture.colorSpace=THREE.SRGBColorSpace;
+    const zoiMark=new THREE.Mesh(new THREE.PlaneGeometry(.31,.31),new THREE.MeshBasicMaterial({map:zoiTexture,transparent:true,opacity:.62,depthWrite:false,toneMapped:false}));
+    zoiMark.position.set(.62,1.13,.441); model.add(zoiMark);
     const baseLabelTexture=textTexture('IRONMAN  PRO  X  MAX','rgba(35,35,32,.68)',true);
     const baseLabel=new THREE.Mesh(new THREE.PlaneGeometry(1.26,.23),new THREE.MeshBasicMaterial({map:baseLabelTexture,transparent:true,depthWrite:false,toneMapped:false}));
     baseLabel.rotation.x=-Math.PI/2; baseLabel.position.set(.67,.424,.74); model.add(baseLabel);
@@ -132,6 +138,7 @@ export function HookahEducation3D({ accents, darkLine = false, onDetailChange }:
     for(let i=0;i<7;i+=1){const angle=i/7*Math.PI*2;const vent=add(new THREE.Mesh(new THREE.CapsuleGeometry(.035,.12,4,12),recess));vent.scale.set(1,1,.32);vent.rotation.set(Math.PI/2,0,-angle);vent.position.set(.62+Math.cos(angle)*.2,3.315,-.12+Math.sin(angle)*.2)}
     const hmdLabelTexture=textTexture('SMOKE GAME','rgba(226,222,211,.9)',true);
     const hmdLabel=new THREE.Mesh(new THREE.PlaneGeometry(.48,.12),new THREE.MeshBasicMaterial({map:hmdLabelTexture,transparent:true,depthWrite:false,toneMapped:false})); hmdLabel.position.set(.62,2.98,.307); model.add(hmdLabel);
+    [-.12,.12].forEach(offset=>{const lidGrip=add(new THREE.Mesh(new THREE.BoxGeometry(.13,.035,.045),edgeSteel));lidGrip.position.set(.62+offset,3.325,-.12);lidGrip.rotation.y=.18});
 
     const socket=add(cylinder(.12,.15,.32,edgeSteel,40)); socket.rotation.z=Math.PI/2; socket.position.set(.01,1.3,-.12);
     const grommet=add(cylinder(.1,.11,.18,rubber,36)); grommet.rotation.z=Math.PI/2; grommet.position.set(-.19,1.3,-.12);
@@ -172,25 +179,28 @@ export function HookahEducation3D({ accents, darkLine = false, onDetailChange }:
     const warm=new THREE.PointLight(0xffc39d,9,11,2);warm.position.set(2.8,1.2,3.5);scene.add(warm);
 
     let defaultDistance=8.6,targetDistance=defaultDistance,userZoomed=false,targetYaw=model.rotation.y,targetPitch=0,yawVelocity=0,pitchVelocity=0;
-    const minZoom=()=>defaultDistance*.68,maxZoom=()=>defaultDistance*1.28;
+    let targetLookY=.38,currentLookY=.38,detailView=false;
+    const minZoom=()=>defaultDistance*.56,maxZoom=()=>defaultDistance*1.28;
     const reportZoom=()=>{setZoomLabel(Math.round(defaultDistance/targetDistance*100));onDetailChange?.(targetDistance<defaultDistance*.86)};
     const setDistance=(value:number)=>{targetDistance=THREE.MathUtils.clamp(value,minZoom(),maxZoom());userZoomed=Math.abs(targetDistance-defaultDistance)>.08;reportZoom()};
-    const resetView=()=>{targetYaw=-.18;targetPitch=0;yawVelocity=0;pitchVelocity=0;targetDistance=defaultDistance;userZoomed=false;reportZoom()};
+    const resetView=()=>{targetYaw=-.18;targetPitch=0;targetLookY=.38;detailView=false;yawVelocity=0;pitchVelocity=0;targetDistance=defaultDistance;userZoomed=false;reportZoom()};
     controlsRef.current={zoomIn:()=>setDistance(targetDistance*.86),zoomOut:()=>setDistance(targetDistance*1.16),reset:resetView};
     const resize=()=>{const bounds=host.getBoundingClientRect();const width=Math.max(bounds.width,1),height=Math.max(bounds.height,1);renderer.setSize(width,height,false);camera.aspect=width/height;const next=camera.aspect<.78?13.3:camera.aspect>1.35?8.25:8.65;if(!userZoomed)targetDistance=next;defaultDistance=next;camera.updateProjectionMatrix();reportZoom()};
     const observer=new ResizeObserver(resize);observer.observe(host);resize();
 
-    const pointers=new Map<number,{x:number;y:number}>();let lastSingle={x:0,y:0},gestureStart={x:0,y:0},pinchDistance=0,pinchCamera=targetDistance,lastTap=0;
+    const raycaster=new THREE.Raycaster();
+    const tapPoint=new THREE.Vector2();
+    const pointers=new Map<number,{x:number;y:number}>();let lastSingle={x:0,y:0},gestureStart={x:0,y:0},pinchDistance=0,pinchCamera=targetDistance;
     const pointerGap=()=>{const values=[...pointers.values()];return values.length>1?Math.hypot(values[0].x-values[1].x,values[0].y-values[1].y):0};
     const onDown=(event:PointerEvent)=>{pointers.set(event.pointerId,{x:event.clientX,y:event.clientY});renderer.domElement.setPointerCapture(event.pointerId);if(pointers.size===1){lastSingle={x:event.clientX,y:event.clientY};gestureStart={...lastSingle};yawVelocity=0;pitchVelocity=0}else if(pointers.size===2){pinchDistance=pointerGap();pinchCamera=targetDistance}};
     const onMove=(event:PointerEvent)=>{if(!pointers.has(event.pointerId))return;pointers.set(event.pointerId,{x:event.clientX,y:event.clientY});if(pointers.size===2){const gap=pointerGap();if(pinchDistance>0&&gap>0)setDistance(pinchCamera*pinchDistance/gap);return}const dx=event.clientX-lastSingle.x,dy=event.clientY-lastSingle.y;yawVelocity=dx*.007;pitchVelocity=dy*.0035;targetYaw+=yawVelocity;targetPitch=THREE.MathUtils.clamp(targetPitch+pitchVelocity,-.14,.12);lastSingle={x:event.clientX,y:event.clientY}};
-    const onUp=(event:PointerEvent)=>{const point=pointers.get(event.pointerId);pointers.delete(event.pointerId);if(pointers.size===1)lastSingle={...[...pointers.values()][0]};if(point&&Math.hypot(point.x-gestureStart.x,point.y-gestureStart.y)<8){const now=performance.now();if(now-lastTap<320)resetView();lastTap=now}};
+    const onUp=(event:PointerEvent)=>{const point=pointers.get(event.pointerId);pointers.delete(event.pointerId);if(pointers.size===1)lastSingle={...[...pointers.values()][0]};if(point&&Math.hypot(point.x-gestureStart.x,point.y-gestureStart.y)<8){if(detailView){resetView();return}const rect=renderer.domElement.getBoundingClientRect();tapPoint.set((event.clientX-rect.left)/rect.width*2-1,-((event.clientY-rect.top)/rect.height)*2+1);raycaster.setFromCamera(tapPoint,camera);const hit=raycaster.intersectObject(model,true).find(entry=>entry.object.visible);if(hit){detailView=true;targetLookY=THREE.MathUtils.clamp(hit.point.y,-.35,1.72);setDistance(defaultDistance*.61)}}};
     const onWheel=(event:WheelEvent)=>{event.preventDefault();setDistance(targetDistance*(event.deltaY>0?1.08:.92))};
     const onKeyDown=(event:KeyboardEvent)=>{if(event.key==='ArrowLeft')targetYaw-=.3;if(event.key==='ArrowRight')targetYaw+=.3;if(event.key==='ArrowUp')targetPitch=THREE.MathUtils.clamp(targetPitch-.07,-.14,.12);if(event.key==='ArrowDown')targetPitch=THREE.MathUtils.clamp(targetPitch+.07,-.14,.12);if(event.key==='+'||event.key==='=')controlsRef.current.zoomIn();if(event.key==='-'||event.key==='_')controlsRef.current.zoomOut();if(event.key==='0'||event.key==='Escape')resetView()};
     renderer.domElement.style.touchAction='none';renderer.domElement.addEventListener('pointerdown',onDown);renderer.domElement.addEventListener('pointermove',onMove);renderer.domElement.addEventListener('pointerup',onUp);renderer.domElement.addEventListener('pointercancel',onUp);renderer.domElement.addEventListener('wheel',onWheel,{passive:false});host.addEventListener('keydown',onKeyDown);
 
     let frame=0,running=true;const scratch=new THREE.Color(),emitter=new THREE.Vector3();
-    const render=()=>{if(!running)return;frame=requestAnimationFrame(render);if(pointers.size===0&&!reduceMotion){yawVelocity*=.92;pitchVelocity*=.86;targetYaw+=yawVelocity;targetPitch=THREE.MathUtils.clamp(targetPitch+pitchVelocity,-.14,.12)}model.rotation.y+=(targetYaw-model.rotation.y)*.09;model.rotation.x+=(targetPitch-model.rotation.x)*.09;camera.position.z=THREE.MathUtils.lerp(camera.position.z,targetDistance,.09);camera.position.y=THREE.MathUtils.lerp(camera.position.y,1.15+(defaultDistance-targetDistance)*.07,.08);camera.lookAt(0,.38,0);
+    const render=()=>{if(!running)return;frame=requestAnimationFrame(render);if(pointers.size===0&&!reduceMotion){yawVelocity*=.92;pitchVelocity*=.86;targetYaw+=yawVelocity;targetPitch=THREE.MathUtils.clamp(targetPitch+pitchVelocity,-.14,.12)}model.rotation.y+=(targetYaw-model.rotation.y)*.09;model.rotation.x+=(targetPitch-model.rotation.x)*.09;camera.position.z=THREE.MathUtils.lerp(camera.position.z,targetDistance,.09);camera.position.y=THREE.MathUtils.lerp(camera.position.y,1.15+(defaultDistance-targetDistance)*.07,.08);currentLookY=THREE.MathUtils.lerp(currentLookY,targetLookY,.1);camera.lookAt(0,currentLookY,0);
       const state=live.current;state.aromaLayers.forEach((layer,i)=>{const visible=i<state.targetColors.length;const material=layer.material as THREE.MeshStandardMaterial;layer.scale.y=THREE.MathUtils.lerp(layer.scale.y,visible?1:.001,visible?.13:.18);material.opacity=THREE.MathUtils.lerp(material.opacity,visible?.96:0,.14);scratch.copy(state.targetColors[i]||neutral);material.color.lerp(scratch,.12);material.emissive.lerp(scratch.clone().multiplyScalar(visible?.28:0),.1)});
       emitter.set(.62,3.22,-.12);model.localToWorld(emitter);const active=state.targetColors.length>0;state.smoke.forEach((sprite,i)=>{const data=sprite.userData;if(!reduceMotion)data.life+=active?data.speed:data.speed*1.8;if(data.life>=1)data.life=0;const life=data.life as number;const offset=(i%3-1)*.08;const curl=Math.sin(life*7.2+data.seed)*(.035+life*.22);sprite.position.set(emitter.x+offset+curl,emitter.y+.03+life*.42,emitter.z+Math.cos(life*6.1+data.seed)*(.025+life*.16));sprite.scale.set(.16+life*.5,.34+life*1.12,1);const fade=Math.min(life/.16,1)*Math.max(0,1-(life-.18)/.82);const material=sprite.material as THREE.SpriteMaterial;material.opacity=THREE.MathUtils.lerp(material.opacity,active?fade*.24:0,.09);if(active){scratch.copy(state.smokeBase).lerp(state.targetColors[state.targetColors.length-1],.045);material.color.lerp(scratch,.045)}});renderer.render(scene,camera)};
     const onVisibility=()=>{if(document.hidden){running=false;cancelAnimationFrame(frame)}else if(!running){running=true;render()}};document.addEventListener('visibilitychange',onVisibility);render();

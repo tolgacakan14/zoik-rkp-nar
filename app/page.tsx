@@ -70,9 +70,9 @@ export default function Home() {
   const [hookahDetail,setHookahDetail]=useState(false);
   const [hookahLine,setHookahLine]=useState<'classic'|'dark'>('classic');
   const [hookahQuery,setHookahQuery]=useState('');
-  const [aromaStatus,setAromaStatus]=useState('Love 66 seçildi');
-  const [selectedAromaIds,setSelectedAromaIds]=useState<string[]>(['love-66']);
-  const [focusedAromaId,setFocusedAromaId]=useState('love-66');
+  const [aromaStatus,setAromaStatus]=useState('Aroma seçerek karışımını oluştur');
+  const [selectedAromaIds,setSelectedAromaIds]=useState<string[]>([]);
+  const [focusedAromaId,setFocusedAromaId]=useState('');
   const heroRef=useRef<HTMLElement|null>(null);
   const activeSection=sections.find(entry=>entry.name===section)!;
   const normalized=query.trim().toLocaleLowerCase('tr-TR');
@@ -116,7 +116,7 @@ export default function Home() {
   const nextProduct=selectedIndex>=0?selectedCategoryItems[(selectedIndex+1)%selectedCategoryItems.length]:undefined;
   function chooseCategory(name:string){const parent=sections.find(entry=>entry.categories.includes(name));if(parent)setSection(parent.name);setCategory(name);setQuery('');setCategoriesOpen(false);window.scrollTo({top:0,behavior:'smooth'});}
   function chooseSection(name:string){const entry=sections.find(option=>option.name===name);if(entry)chooseCategory(entry.categories[0]);}
-  function changeHookahLine(line:'classic'|'dark'){const first=hookahFlavors.find(flavor=>flavor.line===line)!;setHookahLine(line);setHookahQuery('');setSelectedAromaIds([first.id]);setFocusedAromaId(first.id);setAromaStatus(`${first.name} seçildi`);setHookahDetail(false);}
+  function changeHookahLine(line:'classic'|'dark'){setHookahLine(line);setHookahQuery('');setSelectedAromaIds([]);setFocusedAromaId('');setAromaStatus('Aroma seçerek karışımını oluştur');setHookahDetail(false);}
   function toggleAroma(flavor:HookahFlavor){const picked=selectedAromaIds.includes(flavor.id);if(picked){const next=selectedAromaIds.filter(id=>id!==flavor.id);setSelectedAromaIds(next);setFocusedAromaId(next.at(-1)||'');setAromaStatus(`${flavor.name} çıkarıldı`);return;}if(selectedAromaIds.length>=3){setFocusedAromaId(flavor.id);setAromaStatus('3 aroma sınırı · önce bir aromayı çıkar');return;}const next=[...selectedAromaIds,flavor.id];setSelectedAromaIds(next);setFocusedAromaId(flavor.id);setAromaStatus(`${flavor.name} eklendi · ${next.length}/3`);}
   return <main className="menu-app">
     <header className="brand-header"><a className="brand" href="#menu" aria-label="Zoi Kırkpınar menü"><span className="brand-symbol"><img src="/logo.webp" alt="Zoi" /></span></a><span className="menu-word">MENÜ</span><button className="icon-button header-categories" onClick={()=>setCategoriesOpen(true)} aria-label="Tüm kategorileri aç"><LayoutGrid size={19}/></button></header>
@@ -207,7 +207,7 @@ export default function Home() {
       <div className={'education-visual '+(hookahLine==='dark'?'dark-visual':'')} style={{'--aroma':focusedAroma?.color||'#6f8980'} as CSSProperties}>
         <img className="zoi-model-emblem" src="/logo.webp" alt="" aria-hidden="true" />
         <Suspense fallback={<div className="hookah-loading">Model hazırlanıyor…</div>}><HookahEducation3D accents={selectedAromas.map(flavor=>flavor.color)} darkLine={hookahLine==='dark'} onDetailChange={setHookahDetail}/></Suspense>
-        <span className="model-mark">{hookahDetail?'Yakın görünüm':'Sürükle · Yakınlaştır'}</span>
+        <span className="model-mark">{hookahDetail?'Tekrar dokun · Geri dön':'Dokun · Detaya yaklaş'}</span>
       </div>
       <div className="education-panel builder-panel">
         <div className="builder-heading"><div><DialogTitle className="education-title">Nargileni oluştur</DialogTitle><DialogDescription className="education-intro">En fazla 3 aroma seç.</DialogDescription></div></div>
