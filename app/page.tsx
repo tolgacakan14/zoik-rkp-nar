@@ -3,11 +3,11 @@ import { lazy, Suspense, useEffect, useMemo, useRef, useState, type CSSPropertie
 import { ArrowUpRight, Search, X, Coffee, IceCreamBowl, Utensils, LayoutGrid, List, ChevronRight, ChevronLeft, ChevronDown, Check } from 'lucide-react';
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog-local';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import menu from '@/data/menu.json';
 import { hookahFlavors, type HookahFlavor } from '@/data/hookah';
 import { pairingGuides, productPresentation } from '@/data/productPresentation';
+import { defaultSettings, hookahFromCsv, localMenu, menuFromCsv, settingsFromCsv, type LiveMenuItem, type LiveSettings } from '@/lib/live-menu';
 const HookahEducation3D = lazy(() => import('@/components/HookahEducation3D').then(module => ({ default: module.HookahEducation3D })));
-type Item = (typeof menu.groups)[number]['items'][number] & { category: string };
+type Item = LiveMenuItem & { category: string };
 const sections = [
   { name: 'İçecekler', icon: Coffee, categories: ['Espresso Bar', 'Zoi Bar', 'Ice Bar', 'Matcha', 'Kokteyl', 'Frozen & Milkshake', 'Tea Pot', 'Soğuk İçecekler'] },
   { name: 'Yiyecekler', icon: Utensils, categories: ['Gurme Sandviç', 'Tostlar', 'Başlangıçlar', 'Makarna Mantı'] },
@@ -58,6 +58,9 @@ function ProductImage({ item }: { item: Item }) {
   return item.image && !failed ? <img src={item.image} alt={item.name} loading="lazy" onError={() => setFailed(true)} /> : <div className="image-absent" aria-label="Ürün fotoğrafı bulunmuyor"><Coffee size={30} strokeWidth={1} /><span>zoi</span></div>;
 }
 export default function Home() {
+  const [menuData,setMenuData]=useState(localMenu);
+  const [hookahOptions,setHookahOptions]=useState<Array<HookahFlavor & {soldOut?:boolean}>>(hookahFlavors);
+  const [liveSettings,setLiveSettings]=useState<LiveSettings>(defaultSettings);
   const [section,setSection]=useState('İçecekler');
   const [category,setCategory]=useState('Espresso Bar');
   const [query,setQuery]=useState('');
@@ -74,9 +77,27 @@ export default function Home() {
   const [selectedAromaIds,setSelectedAromaIds]=useState<string[]>([]);
   const [focusedAromaId,setFocusedAromaId]=useState('');
   const heroRef=useRef<HTMLElement|null>(null);
-  const activeSection=sections.find(entry=>entry.name===section)!;
+  const sectionDefinitions=useMemo(()=>sections.map(entry=>{
+    const categories=menuData.groups.filter(group=>group.section?group.section===entry.name:entry.categories.includes(group.category)).map(group=>group.category);
+    return {...entry,categories:categories.length?categories:entry.categories};
+  }),[menuData]);
+  const activeSection=sectionDefinitions.find(entry=>entry.name===section)||sectionDefinitions[0];
   const normalized=query.trim().toLocaleLowerCase('tr-TR');
-  const results=useMemo(()=>menu.groups.filter(group=>normalized||group.category===category).flatMap(group=>group.items.map(item=>({...item,category:group.category}))).filter(item=>!normalized||[item.name,item.description,item.category].join(' ').toLocaleLowerCase('tr-TR').includes(normalized)),[category,normalized]);
+  const results=useMemo(()=>menuData.groups.filter(group=>normalized||group.category===category).flatMap(group=>group.items.map(item=>({...item,category:group.category}))).filter(item=>!normalized||[item.name,item.description,item.category].join(' ').toLocaleLowerCase('tr-TR').includes(normalized)),[menuData,category,normalized]);
+  useEffect(()=>{
+    let mounted=true;
+    fetch('/api/menu',{cache:'no-store'}).then(async response=>{
+      if(!response.ok)throw new Error('Canlı menü kullanılamıyor');
+      const payload=await response.json() as {menuCsv:string;hookahCsv:string;settingsCsv:string};
+      if(!mounted)return;
+      const nextMenu=menuFromCsv(payload.menuCsv);
+      const nextHookah=hookahFromCsv(payload.hookahCsv);
+      if(nextMenu.groups.length)setMenuData(nextMenu);
+      if(nextHookah.length)setHookahOptions(nextHookah);
+      setLiveSettings(settingsFromCsv(payload.settingsCsv));
+    }).catch(()=>{});
+    return()=>{mounted=false};
+  },[]);
   useEffect(()=>setVisibleCount(6),[category,normalized,view]);
   useEffect(()=>{
     if(visibleCount>=results.length||!loadMoreRef.current)return;
@@ -102,22 +123,23 @@ export default function Home() {
     reducedMotion.addEventListener?.('change',schedule);
     return ()=>{window.removeEventListener('scroll',schedule);window.removeEventListener('resize',schedule);reducedMotion.removeEventListener?.('change',schedule);if(frame)window.cancelAnimationFrame(frame);};
   },[]);
-  const selectedAromas=selectedAromaIds.map(id=>hookahFlavors.find(flavor=>flavor.id===id)).filter((flavor):flavor is HookahFlavor=>Boolean(flavor));
+  const selectedAromas=selectedAromaIds.map(id=>hookahOptions.find(flavor=>flavor.id===id)).filter((flavor):flavor is HookahFlavor=>Boolean(flavor));
   const focusedAroma=selectedAromas.find(flavor=>flavor.id===focusedAromaId)||selectedAromas.at(-1);
-  const visibleAromas=hookahFlavors.filter(flavor=>flavor.line===hookahLine&&flavor.name.toLocaleLowerCase('tr-TR').includes(hookahQuery.toLocaleLowerCase('tr-TR')));
-  const selectedPresentation=selected?productPresentation[selected.id]:undefined;
+  const visibleAromas=hookahOptions.filter(flavor=>flavor.line===hookahLine&&flavor.name.toLocaleLowerCase('tr-TR').includes(hookahQuery.toLocaleLowerCase('tr-TR')));
+  const selectedPresentation=selected?{...productPresentation[selected.id],intro:selected.description||productPresentation[selected.id]?.intro,character:selected.character||productPresentation[selected.id]?.character,intensity:selected.intensity||productPresentation[selected.id]?.intensity}:undefined;
   const detailIntro=selected?.description&&!selected.description.startsWith('İçerik bilgisi')?selected.description:selectedPresentation?.intro;
   const pairingOptions=selected?pairingGuides[selected.category]:undefined;
-  const pairingGuide=selected&&pairingOptions?.length?pairingOptions[(Number(selected.id)-1)%pairingOptions.length]:undefined;
-  const pairedProduct=pairingGuide?menu.groups.flatMap(group=>group.items.map(item=>({...item,category:group.category}))).find(item=>item.id===pairingGuide.productId):undefined;
-  const selectedCategoryItems=selected?menu.groups.find(group=>group.category===selected.category)?.items.map(item=>({...item,category:selected.category}))||[]:[];
+  const fallbackPairingGuide=selected&&pairingOptions?.length?pairingOptions[(Number(selected.id)-1)%pairingOptions.length]:undefined;
+  const pairingGuide=selected?.pairingProductId?{productId:selected.pairingProductId,note:selected.pairingNote||''}:fallbackPairingGuide;
+  const pairedProduct=pairingGuide?menuData.groups.flatMap(group=>group.items.map(item=>({...item,category:group.category}))).find(item=>item.id===pairingGuide.productId):undefined;
+  const selectedCategoryItems=selected?menuData.groups.find(group=>group.category===selected.category)?.items.map(item=>({...item,category:selected.category}))||[]:[];
   const selectedIndex=selected?selectedCategoryItems.findIndex(item=>item.id===selected.id):-1;
   const previousProduct=selectedIndex>=0?selectedCategoryItems[(selectedIndex-1+selectedCategoryItems.length)%selectedCategoryItems.length]:undefined;
   const nextProduct=selectedIndex>=0?selectedCategoryItems[(selectedIndex+1)%selectedCategoryItems.length]:undefined;
-  function chooseCategory(name:string){const parent=sections.find(entry=>entry.categories.includes(name));if(parent)setSection(parent.name);setCategory(name);setQuery('');setCategoriesOpen(false);window.scrollTo({top:0,behavior:'smooth'});}
-  function chooseSection(name:string){const entry=sections.find(option=>option.name===name);if(entry)chooseCategory(entry.categories[0]);}
+  function chooseCategory(name:string){const parent=sectionDefinitions.find(entry=>entry.categories.includes(name));if(parent)setSection(parent.name);setCategory(name);setQuery('');setCategoriesOpen(false);window.scrollTo({top:0,behavior:'smooth'});}
+  function chooseSection(name:string){const entry=sectionDefinitions.find(option=>option.name===name);if(entry)chooseCategory(entry.categories[0]);}
   function changeHookahLine(line:'classic'|'dark'){setHookahLine(line);setHookahQuery('');setSelectedAromaIds([]);setFocusedAromaId('');setAromaStatus('Aroma seçerek karışımını oluştur');setHookahDetail(false);}
-  function toggleAroma(flavor:HookahFlavor){const picked=selectedAromaIds.includes(flavor.id);if(picked){const next=selectedAromaIds.filter(id=>id!==flavor.id);setSelectedAromaIds(next);setFocusedAromaId(next.at(-1)||'');setAromaStatus(`${flavor.name} çıkarıldı`);return;}if(selectedAromaIds.length>=3){setFocusedAromaId(flavor.id);setAromaStatus('3 aroma sınırı · önce bir aromayı çıkar');return;}const next=[...selectedAromaIds,flavor.id];setSelectedAromaIds(next);setFocusedAromaId(flavor.id);setAromaStatus(`${flavor.name} eklendi · ${next.length}/3`);}
+  function toggleAroma(flavor:HookahFlavor&{soldOut?:boolean}){if(flavor.soldOut){setAromaStatus(`${flavor.name} şu an tükendi`);return;}const picked=selectedAromaIds.includes(flavor.id);if(picked){const next=selectedAromaIds.filter(id=>id!==flavor.id);setSelectedAromaIds(next);setFocusedAromaId(next.at(-1)||'');setAromaStatus(`${flavor.name} çıkarıldı`);return;}if(selectedAromaIds.length>=liveSettings.maxAromas){setFocusedAromaId(flavor.id);setAromaStatus(`${liveSettings.maxAromas} aroma sınırı · önce bir aromayı çıkar`);return;}const next=[...selectedAromaIds,flavor.id];setSelectedAromaIds(next);setFocusedAromaId(flavor.id);setAromaStatus(`${flavor.name} eklendi · ${next.length}/${liveSettings.maxAromas}`);}
   return <main className="menu-app">
     <header className="brand-header"><a className="brand" href="#menu" aria-label="Zoi Kırkpınar menü"><span className="brand-symbol"><img src="/logo.webp" alt="Zoi" /></span></a><span className="menu-word">MENÜ</span><button className="icon-button header-categories" onClick={()=>setCategoriesOpen(true)} aria-label="Tüm kategorileri aç"><LayoutGrid size={19}/></button></header>
 
@@ -163,7 +185,7 @@ export default function Home() {
     <button className="hero-cta" onClick={()=>{setHookahDetail(false);setEducationOpen(true)}}>
       <span className="hero-cta-text">
         <strong>Nargileni Oluştur</strong>
-        <small>25 aroma · kendi karışımını tasarla</small>
+        <small>{hookahOptions.filter(flavor=>!flavor.soldOut).length} aroma · kendi karışımını tasarla</small>
       </span>
       <span className="hero-cta-arrow"><ArrowUpRight size={18}/></span>
     </button>
@@ -174,13 +196,13 @@ export default function Home() {
         <button className="menu-directory-button" onClick={()=>setCategoriesOpen(true)} aria-label="Tüm kategorileri aç"><LayoutGrid size={18}/><span>Kategoriler</span></button>
       </div>
       <div className="section-tabs">
-        <Tabs value={section} onValueChange={chooseSection}><TabsList className="section-list" aria-label="Menü bölümleri">{sections.map(({name,icon:Icon})=><TabsTrigger value={name} key={name} className="section-tab"><Icon size={20} strokeWidth={1.5}/><span>{name}</span></TabsTrigger>)}</TabsList></Tabs>
+        <Tabs value={section} onValueChange={chooseSection}><TabsList className="section-list" aria-label="Menü bölümleri">{sectionDefinitions.map(({name,icon:Icon})=><TabsTrigger value={name} key={name} className="section-tab"><Icon size={20} strokeWidth={1.5}/><span>{name}</span></TabsTrigger>)}</TabsList></Tabs>
       </div>
       {!normalized&&<nav className="category-strip" aria-label="Alt kategoriler">{activeSection.categories.map(name=><button key={name} className={name===category?'category-chip selected':'category-chip'} aria-current={name===category?'true':undefined} onClick={()=>chooseCategory(name)}>{name}</button>)}</nav>}
     </div>
     <section id="menu" className="menu-content" aria-label={normalized?'Arama sonuçları':category}>
       <div className="results-heading"><h2>{normalized?'Arama':category}<span>{results.length}</span></h2><div className="view-switch" aria-label="Menü görünümü"><button aria-label="Kart görünümü" aria-pressed={view==='grid'} className={view==='grid'?'active':''} onClick={()=>setView('grid')}><LayoutGrid size={17}/></button><button aria-label="Liste görünümü" aria-pressed={view==='list'} className={view==='list'?'active':''} onClick={()=>setView('list')}><List size={19}/></button></div></div>
-      {results.length?<><div className={'product-grid '+(view==='list'?'list-view':'')} key={category+normalized+view}>{results.slice(0,visibleCount).map((item,index)=><button className="menu-card" style={{'--reveal-order':index%6} as CSSProperties} key={item.id} onClick={()=>setSelected(item)}><div className="card-image"><ProductImage item={item}/></div><div className="card-content"><h3>{item.name}</h3><div className="card-bottom"><strong>{item.price.toLocaleString('tr-TR')}<span>₺</span></strong></div></div></button>)}</div>{visibleCount<results.length&&<div className="more-products" ref={loadMoreRef}><button onClick={()=>setVisibleCount(count=>Math.min(count+6,results.length))}>6 ürün daha göster <ChevronDown size={16}/></button></div>}</>:<div className="empty-results"><Search size={30} strokeWidth={1}/><h3>Sonuç yok</h3><button onClick={()=>setQuery('')}>Menüye dön</button></div>}
+      {results.length?<><div className={'product-grid '+(view==='list'?'list-view':'')} key={category+normalized+view}>{results.slice(0,visibleCount).map((item,index)=><button className={'menu-card '+(item.soldOut?'sold-out':'')} style={{'--reveal-order':index%6} as CSSProperties} key={item.id} onClick={()=>setSelected(item)}><div className="card-image"><ProductImage item={item}/>{item.soldOut&&<span className="sold-out-badge">Tükendi</span>}</div><div className="card-content"><h3>{item.name}</h3><div className="card-bottom"><strong>{item.soldOut?'Bugün yok':<>{item.price.toLocaleString('tr-TR')}<span>₺</span></>}</strong></div></div></button>)}</div>{visibleCount<results.length&&<div className="more-products" ref={loadMoreRef}><button onClick={()=>setVisibleCount(count=>Math.min(count+6,results.length))}>6 ürün daha göster <ChevronDown size={16}/></button></div>}</>:<div className="empty-results"><Search size={30} strokeWidth={1}/><h3>Sonuç yok</h3><button onClick={()=>setQuery('')}>Menüye dön</button></div>}
       <button className="all-categories-button" onClick={()=>setCategoriesOpen(true)}>Tüm menü<span>Kategorileri gör <ChevronDown size={16}/></span></button>
     </section>
     <footer className="menu-footer"><span>zoi <small>KIRKPINAR</small></span><p>Alerjen ve içerik bilgisi için ekibimize danışabilirsin.</p></footer>
@@ -193,7 +215,7 @@ export default function Home() {
           <DialogTitle className="detail-title">{selected.name}</DialogTitle>
           {detailIntro&&<DialogDescription className="detail-description">{detailIntro}</DialogDescription>}
           <div className="detail-traits"><div><small>KARAKTER</small><strong>{selectedPresentation?.character||notes[selected.category]||selected.category}</strong></div>{selectedPresentation?.intensity&&<div><small>YOĞUNLUK</small><span className="detail-intensity" aria-label={`${selectedPresentation.intensity} / 4`}>{[1,2,3,4].map(level=><i key={level} className={level<=selectedPresentation.intensity!?'filled':''}/>)}</span></div>}</div>
-          <div className="detail-bottom"><strong>{selected.price.toLocaleString('tr-TR')} <span>₺</span></strong><DialogClose className="back-to-menu">Menüye dön <ArrowUpRight size={16}/></DialogClose></div>
+          <div className="detail-bottom"><strong>{selected.soldOut?'Bugün tükendi':<>{selected.price.toLocaleString('tr-TR')} <span>₺</span></>}</strong><DialogClose className="back-to-menu">Menüye dön <ArrowUpRight size={16}/></DialogClose></div>
           {pairedProduct&&pairingGuide&&<button className="detail-pairing" onClick={()=>setSelected(pairedProduct)} aria-label={`${pairedProduct.name} önerisini aç`}>
             <span className="pairing-copy"><span className="pairing-eyebrow">BUNUNLA İYİ GİDER · {pairedProduct.category}</span><span className="pairing-name">{pairedProduct.name}</span><span className="pairing-note">{pairingGuide.note}</span><span className="pairing-price">{pairedProduct.price.toLocaleString('tr-TR')} ₺</span></span>
             <span className="pairing-arrow"><ArrowUpRight size={18}/></span>
@@ -201,7 +223,7 @@ export default function Home() {
         </div>
       </>}</DialogContent>
     </Dialog>
-    <Dialog open={categoriesOpen} onOpenChange={setCategoriesOpen}><DialogContent className="categories-dialog" showCloseButton={false}><div className="categories-dialog-heading"><div><DialogTitle>Kategoriler</DialogTitle><DialogDescription>Bugün canın ne çekiyor?</DialogDescription></div><DialogClose className="icon-button" aria-label="Kategorileri kapat"><X size={22}/></DialogClose></div><div className="category-directory">{sections.map(({name,icon:Icon,categories})=><div key={name}><h3><Icon size={17}/>{name}</h3>{categories.map(name=><button key={name} className={name===category?'current-category':''} onClick={()=>chooseCategory(name)}><span>{name}</span><small>{menu.groups.find(entry=>entry.category===name)?.items.length}</small><ChevronRight size={16}/></button>)}</div>)}</div></DialogContent></Dialog>
+    <Dialog open={categoriesOpen} onOpenChange={setCategoriesOpen}><DialogContent className="categories-dialog" showCloseButton={false}><div className="categories-dialog-heading"><div><DialogTitle>Kategoriler</DialogTitle><DialogDescription>Bugün canın ne çekiyor?</DialogDescription></div><DialogClose className="icon-button" aria-label="Kategorileri kapat"><X size={22}/></DialogClose></div><div className="category-directory">{sectionDefinitions.map(({name,icon:Icon,categories})=><div key={name}><h3><Icon size={17}/>{name}</h3>{categories.map(name=><button key={name} className={name===category?'current-category':''} onClick={()=>chooseCategory(name)}><span>{name}</span><small>{menuData.groups.find(entry=>entry.category===name)?.items.length}</small><ChevronRight size={16}/></button>)}</div>)}</div></DialogContent></Dialog>
     <Dialog open={educationOpen} onOpenChange={setEducationOpen}><DialogContent className="education-dialog hookah-builder" showCloseButton={false}>
       <DialogClose className="hookah-close" aria-label="Nargile menüsünü kapat"><X size={19}/></DialogClose>
       <div className={'education-visual '+(hookahLine==='dark'?'dark-visual':'')} style={{'--aroma':focusedAroma?.color||'#6f8980'} as CSSProperties}>
@@ -210,20 +232,20 @@ export default function Home() {
         <span className="model-mark">{hookahDetail?'Tekrar dokun · Geri dön':'Dokun · Detaya yaklaş'}</span>
       </div>
       <div className="education-panel builder-panel">
-        <div className="builder-heading"><div><DialogTitle className="education-title">Nargileni oluştur</DialogTitle><DialogDescription className="education-intro">En fazla 3 aroma seç.</DialogDescription></div></div>
+        <div className="builder-heading"><div><DialogTitle className="education-title">Nargileni oluştur</DialogTitle><DialogDescription className="education-intro">En fazla {liveSettings.maxAromas} aroma seç.</DialogDescription></div></div>
         <div className="line-switch" aria-label="Nargile serisi">
-          <button className={hookahLine==='classic'?'active':''} onClick={()=>changeHookahLine('classic')}><span>Klasik</span><strong>580 ₺</strong></button>
-          <button className={hookahLine==='dark'?'active':''} onClick={()=>changeHookahLine('dark')}><span>Dark</span><strong>650 ₺</strong></button>
+          <button className={hookahLine==='classic'?'active':''} onClick={()=>changeHookahLine('classic')}><span>Klasik</span><strong>{liveSettings.classicPrice} ₺</strong></button>
+          <button className={hookahLine==='dark'?'active':''} onClick={()=>changeHookahLine('dark')}><span>Dark</span><strong>{liveSettings.darkPrice} ₺</strong></button>
         </div>
-        <div className="blend-rail"><span>KARIŞIMIN</span><div className="blend-slots">{[0,1,2].map(index=>{const flavor=selectedAromas[index];return flavor?<button key={flavor.id} onClick={()=>toggleAroma(flavor)} aria-label={`${flavor.name} aromasını çıkar`} style={{'--flavor':flavor.color} as CSSProperties}><i/>{flavor.name}<X size={13}/></button>:<span key={index}>+ Aroma</span>})}</div></div>
+        <div className="blend-rail"><span>KARIŞIMIN</span><div className="blend-slots">{Array.from({length:liveSettings.maxAromas},(_,index)=>{const flavor=selectedAromas[index];return flavor?<button key={flavor.id} onClick={()=>toggleAroma(flavor)} aria-label={`${flavor.name} aromasını çıkar`} style={{'--flavor':flavor.color} as CSSProperties}><i/>{flavor.name}<X size={13}/></button>:<span key={index}>+ Aroma</span>})}</div></div>
         <label className="flavor-search"><Search size={16}/><input value={hookahQuery} onChange={event=>setHookahQuery(event.target.value)} placeholder="Aroma ara" aria-label="Nargile aroması ara"/>{hookahQuery&&<button onClick={()=>setHookahQuery('')} aria-label="Aroma aramasını temizle"><X size={15}/></button>}</label>
-        <div className="flavor-count"><span>Aromalar</span><small>{selectedAromas.length}/3</small></div>
+        <div className="flavor-count"><span>Aromalar</span><small>{selectedAromas.length}/{liveSettings.maxAromas}</small></div>
         <p className="aroma-status" aria-live="polite">{aromaStatus}</p>
         <div className="flavor-grid" aria-label="Aroma seçenekleri">
-          {visibleAromas.map(flavor=>{const picked=selectedAromaIds.includes(flavor.id);return <button key={flavor.id} aria-pressed={picked} className={picked?'flavor-card picked':'flavor-card'} onClick={()=>toggleAroma(flavor)}><i style={{'--flavor':flavor.color} as CSSProperties}/><span><strong>{flavor.name}</strong><small>{flavor.tags.slice(0,2).join(' · ')}</small></span><b>{picked?<Check size={14}/>:<span>+</span>}</b></button>})}
+          {visibleAromas.map(flavor=>{const picked=selectedAromaIds.includes(flavor.id);return <button key={flavor.id} aria-pressed={picked} disabled={flavor.soldOut} className={`${picked?'flavor-card picked':'flavor-card'}${flavor.soldOut?' sold-out':''}`} onClick={()=>toggleAroma(flavor)}><i style={{'--flavor':flavor.color} as CSSProperties}/><span><strong>{flavor.name}</strong><small>{flavor.soldOut?'Tükendi':flavor.tags.slice(0,2).join(' · ')}</small></span><b>{picked?<Check size={14}/>:<span>{flavor.soldOut?'—':'+'}</span>}</b></button>})}
         </div>
         {focusedAroma&&<div className="flavor-profile" style={{'--aroma':focusedAroma.color} as CSSProperties}><div className="profile-top"><span><i style={{background:focusedAroma.color}}/>{focusedAroma.name}</span><small>TAT PROFİLİ</small></div><p>{focusedAroma.note}</p><div className="taste-tags">{focusedAroma.tags.map(tag=><span key={tag}>{tag}</span>)}</div></div>}
-        <div className="service-extras"><span>Servis seçenekleri</span><div><small>Kafa değişimi <b>450 ₺</b></small><small>Buzlu marpuç <b>+75 ₺</b></small></div></div>
+        <div className="service-extras"><span>Servis seçenekleri</span><div><small>Kafa değişimi <b>{liveSettings.headChange} ₺</b></small><small>Buzlu marpuç <b>+{liveSettings.iceHose} ₺</b></small></div></div>
         <p className="hookah-note">Tütün ürünleri sağlığa zararlıdır.</p>
       </div>
     </DialogContent></Dialog>

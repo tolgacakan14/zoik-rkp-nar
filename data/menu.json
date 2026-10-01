@@ -404,14 +404,14 @@
           "name": "Browni",
           "price": 390,
           "description": "Arası beyaz çikolata üstü ise belçika çikolatası sosu ile servis edilir",
-          "image": "https://img.gopos.com.tr/5L13gNcyZE/165d0b20-210d-48b2-8d84-f85ce7b4fa5b.webp",
+          "image": null,
           "id": "51"
         },
         {
           "name": "Zoi Profiterol",
           "price": 390,
           "description": "",
-          "image": "https://img.gopos.com.tr/5L13gNcyZE/769fc9d4-45d6-4537-8fde-c8118d55d257.webp",
+          "image": null,
           "id": "52"
         }
       ]
