@@ -487,13 +487,19 @@ button{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 .brand-symbol img{position:static;width:100%;height:100%;max-width:100%;object-fit:cover}
 .hero{min-height:430px;background:linear-gradient(180deg,#faf7efd8 0%,#f2eddfeb 68%,#ece5d7f5 100%),url('/stone-wall.jpg') center top/760px auto repeat}
 .hero{--olive-progress:0}
-.olive-tree{position:absolute;z-index:0;bottom:-9px;width:clamp(118px,17.5%,156px);height:87%;overflow:visible;pointer-events:none;opacity:.76;filter:drop-shadow(0 8px 8px rgba(47,67,56,.06));mix-blend-mode:multiply}
-.olive-tree-left{left:clamp(8px,2.4vw,24px)}
-.olive-tree-right{right:clamp(8px,2.4vw,24px);transform:scaleX(-1)}
-.olive-wood path{fill:none;stroke:#536c5f;stroke-width:1.15;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke;stroke-dasharray:1;stroke-dashoffset:1;animation:olive-draw 1.55s .24s cubic-bezier(.22,.75,.2,1) forwards}
-.olive-wood .olive-trunk{stroke:#465f53;stroke-width:1.55;animation-duration:1.25s;animation-delay:.08s}
-.olive-leaf{fill:#788f78;stroke:#4f6e5c;stroke-width:.42;vector-effect:non-scaling-stroke;transform-box:fill-box;transform-origin:center;opacity:clamp(0,calc((var(--olive-progress) - var(--leaf-at)) * 8),1);transform:scale(clamp(.08,calc((var(--olive-progress) - var(--leaf-at)) * 8),1));transition:opacity .14s linear,transform .22s cubic-bezier(.2,.8,.2,1)}
-.olive-fruit{fill:#536653;stroke:#f4efe3;stroke-width:.65;vector-effect:non-scaling-stroke;transform-box:fill-box;transform-origin:center;opacity:clamp(0,calc((var(--olive-progress) - var(--leaf-at)) * 9),1);transform:scale(clamp(.05,calc((var(--olive-progress) - var(--leaf-at)) * 9),1));transition:opacity .14s linear,transform .22s cubic-bezier(.2,.8,.2,1)}
+.olive-tree{position:absolute;z-index:0;bottom:-7px;width:clamp(154px,22%,196px);height:92%;overflow:visible;pointer-events:none;opacity:.82;filter:drop-shadow(0 10px 10px rgba(47,67,56,.07));mix-blend-mode:multiply}
+.olive-tree-left{left:clamp(-20px,-1vw,-4px)}
+.olive-tree-right{right:clamp(-20px,-1vw,-4px);transform:scaleX(-1)}
+.olive-wood path{fill:none;stroke:#536c5f;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.olive-wood .olive-trunk-fill{fill:#6f7768;fill-opacity:.13;stroke:#4d6255;stroke-width:1.05}
+.olive-wood .olive-trunk{stroke:#3f594d;stroke-width:1.65;stroke-dasharray:1;stroke-dashoffset:1;animation:olive-draw 1.15s .08s cubic-bezier(.22,.75,.2,1) forwards}
+.olive-wood .olive-bark{stroke:#718275;stroke-width:.72;opacity:.65}
+.olive-wood .olive-root{stroke:#536c5f;stroke-width:1.15;opacity:.7}
+.olive-wood .olive-branch{stroke:#4c6759;stroke-width:1.18;stroke-dasharray:1;stroke-dashoffset:clamp(0,calc(1 - (var(--olive-progress) - var(--branch-at)) * 4.8),1);opacity:clamp(.08,calc((var(--olive-progress) - var(--branch-at)) * 6 + .08),1);transition:stroke-dashoffset .12s linear,opacity .12s linear}
+.olive-wood .olive-scaffold{stroke-dashoffset:clamp(0,calc(.58 - var(--olive-progress) * 1.9),.58);opacity:clamp(.56,calc(.56 + var(--olive-progress) * .44),1)}
+.olive-leaf{fill:#82947c;stroke:#496958;stroke-width:.4;vector-effect:non-scaling-stroke;transform-box:fill-box;transform-origin:center;opacity:clamp(0,calc((var(--olive-progress) - var(--leaf-at)) * 8),.94);transform:scale(clamp(.05,calc((var(--olive-progress) - var(--leaf-at)) * 8),1));transition:opacity .13s linear,transform .2s cubic-bezier(.2,.8,.2,1)}
+.olive-crown g:nth-child(3n) .olive-leaf{fill:#a2ad96}.olive-crown g:nth-child(4n) .olive-leaf{fill:#718a73}
+.olive-fruit{fill:#394e42;stroke:#f4efe3;stroke-width:.65;vector-effect:non-scaling-stroke;transform-box:fill-box;transform-origin:center;opacity:clamp(0,calc((var(--olive-progress) - var(--leaf-at)) * 9),1);transform:scale(clamp(.05,calc((var(--olive-progress) - var(--leaf-at)) * 9),1));transition:opacity .14s linear,transform .22s cubic-bezier(.2,.8,.2,1)}
 @keyframes olive-draw{to{stroke-dashoffset:0}}
 .hero-line-art{top:3%;width:min(76%,390px);height:auto;opacity:.82}
 .hero-copy{z-index:2;gap:7px;padding:0 28px 47px}
@@ -546,8 +552,8 @@ button{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 @media(max-width:600px){
   .brand-header{padding:11px 17px 9px}.brand-symbol{width:72px;height:36px}
   .hero{height:54dvh;min-height:390px;max-height:520px}
-  .olive-tree{bottom:-8px;width:102px;height:79%;opacity:.68}
-  .olive-tree-left{left:-4px}.olive-tree-right{right:-4px}
+  .olive-tree{bottom:-7px;width:148px;height:86%;opacity:.78}
+  .olive-tree-left{left:-10px}.olive-tree-right{right:-10px}
   .hero-line-art{top:4%;width:86%;max-height:230px}
   .hero-copy{gap:6px;padding:0 20px 38px}
   .hero-brandmark{width:146px;height:48px}
@@ -559,7 +565,7 @@ button{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
   .detail-navigation button{width:31px;height:31px}
   .aroma-status{margin-bottom:2px}
 }
-@media(prefers-reduced-motion:reduce){.hero-brandmark,.hero-cta::before,.detail-dialog .detail-image>img,.detail-dialog .detail-body>*,.flavor-card.picked::after{animation:none;opacity:1;transform:none}.olive-wood path{animation:none;stroke-dashoffset:0}.olive-leaf,.olive-fruit{transition:none}}
+@media(prefers-reduced-motion:reduce){.hero-brandmark,.hero-cta::before,.detail-dialog .detail-image>img,.detail-dialog .detail-body>*,.flavor-card.picked::after{animation:none;opacity:1;transform:none}.olive-wood .olive-trunk{animation:none;stroke-dashoffset:0}.olive-wood .olive-branch{stroke-dashoffset:0;opacity:1}.olive-leaf,.olive-fruit{transition:none;opacity:.94;transform:scale(1)}}
 
 /* Glass editorial product sheet and a richer cross-menu pairing card. */
 [data-slot=dialog-overlay]{background:rgba(20,45,38,.5)!important;backdrop-filter:blur(17px) saturate(112%)}
