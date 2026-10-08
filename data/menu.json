@@ -218,14 +218,14 @@
           "name": "White Purée",
           "price": 320,
           "description": "Kadifemsi dokusu ve zarif meyve notalarıyla öne çıkan, dengeli ve ferahlatıcı bir imza kokteyl",
-          "image": "/products/28-v2.webp",
+          "image": "/products/28-v3.webp",
           "id": "28"
         },
         {
           "name": "Chili",
           "price": 320,
           "description": "Çarkıfelek, Turunç, Arnavut Biberi. Baharatın cesur dokunuşunu ferah notalarla buluşturan, karakteri güçlü bir imza kokteyl.",
-          "image": "/products/29-v2.webp",
+          "image": "/products/29-v3.webp",
           "id": "29"
         },
         {
@@ -279,35 +279,35 @@
           "name": "Caesary",
           "price": 470,
           "description": "Sezar sos, hindi füme, marul, parmesan peyniri, zeytinyağı, kuru domates.",
-          "image": "/products/36-v2.webp",
+          "image": "/products/36-v3.webp",
           "id": "36"
         },
         {
           "name": "Olive Garden",
           "price": 400,
           "description": "Zeytin pate, domates, mozarella, roka, balzamik glaze sos.",
-          "image": "/products/37-v2.webp",
+          "image": "/products/37-v3.webp",
           "id": "37"
         },
         {
           "name": "Truffle Roast",
           "price": 550,
           "description": "Karabiberli roast beef, kaymak peyniri, eski kaşar, trüflü Zoi sos, roka, pesto sos.",
-          "image": "/products/38-v2.webp",
+          "image": "/products/38-v3.webp",
           "id": "38"
         },
         {
           "name": "Anatolia Melt",
           "price": 550,
           "description": "Gorgonzola, dana bacon, kuru et, otlu kaymak kreması, domates, zeytinyağı.",
-          "image": "/products/39-v2.webp",
+          "image": "/products/39-v3.webp",
           "id": "39"
         },
         {
           "name": "Riviera",
           "price": 450,
           "description": "%100 İtalyan dana salam, kaymak peyniri, taze kaşar, çeçil, rus salatası, marul, salatalık turşusu, trüflü mayonez.",
-          "image": "/products/40-v2.webp",
+          "image": "/products/40-v3.webp",
           "id": "40"
         }
       ]
@@ -319,21 +319,21 @@
           "name": "Bol Kaşarlı",
           "price": 320,
           "description": "Bazlama ekmeği, taze kaşar peyniri. Yanında patates kızartması ve turşu ile.",
-          "image": "/products/41-v2.webp",
+          "image": "/products/41-v3.webp",
           "id": "41"
         },
         {
           "name": "Geleneksel Sucuklu Kaşarlı",
           "price": 360,
           "description": "Bazlama ekmeği, sucuk, taze kaşar. Yanında patates kızartması ve turşu ile.",
-          "image": "/products/42-v2.webp",
+          "image": "/products/42-v3.webp",
           "id": "42"
         },
         {
           "name": "Balkan Tost",
           "price": 390,
           "description": "Bazlama ekmeği, balkan sos, labne peyniri, kaşar ve kasap sucuk, kuru et. Yanında patates kızartması ve turşu ile.",
-          "image": "/products/43-v2.webp",
+          "image": "/products/43-v3.webp",
           "id": "43"
         }
       ]
@@ -345,21 +345,21 @@
           "name": "Combo Tabağı",
           "price": 500,
           "description": "Patates kızartması, çıtır tavuk parçaları, soğan halkası, mozarella sticks",
-          "image": "/products/44-v2.webp",
+          "image": "/products/44-v3.webp",
           "id": "44"
         },
         {
           "name": "Patates Kızartması",
           "price": 300,
           "description": "",
-          "image": "/products/45-v2.webp",
+          "image": "/products/45-v3.webp",
           "id": "45"
         },
         {
           "name": "Çıpçıtır Tavuk Patates",
           "price": 440,
           "description": "",
-          "image": "/products/46-v2.webp",
+          "image": "/products/46-v3.webp",
           "id": "46"
         }
       ]
@@ -371,14 +371,14 @@
           "name": "Fettucini Alfredo",
           "price": 450,
           "description": "Alfredo sos, tavuk, mantar",
-          "image": "/products/47-v2.webp",
+          "image": "/products/47-v3.webp",
           "id": "47"
         },
         {
           "name": "Zoi Special Çıtır Mantı",
           "price": 480,
           "description": "Zoi özel ev yapımı mantı. Süzme yoğurt, kırmızı&yeşil yağ ile.",
-          "image": "/products/48-v2.webp",
+          "image": "/products/48-v3.webp",
           "id": "48"
         }
       ]
@@ -390,14 +390,14 @@
           "name": "San Sebastian",
           "price": 370,
           "description": "",
-          "image": "/products/49-v2.webp",
+          "image": "/products/49-v3.webp",
           "id": "49"
         },
         {
           "name": "Tiramisu",
           "price": 390,
           "description": "",
-          "image": "/products/50-v2.webp",
+          "image": "/products/50-v3.webp",
           "id": "50"
         },
         {
@@ -423,7 +423,7 @@
           "name": "Dondurma",
           "price": 80,
           "description": "Kase, külah veya kornet külah tercihi ile. Çeşitler için bilgi alabilirsiniz.",
-          "image": "/products/53-v2.webp",
+          "image": "/products/53-v3.webp",
           "id": "53"
         }
       ]
