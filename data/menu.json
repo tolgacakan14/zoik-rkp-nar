@@ -218,56 +218,56 @@
           "name": "White Purée",
           "price": 320,
           "description": "Kadifemsi dokusu ve zarif meyve notalarıyla öne çıkan, dengeli ve ferahlatıcı bir imza kokteyl",
-          "image": "https://img.gopos.com.tr/5L13gNcyZE/4f200c37-a489-48f8-b604-b4a3a249d643.webp",
+          "image": "/products/28-v2.webp",
           "id": "28"
         },
         {
           "name": "Chili",
           "price": 320,
           "description": "Çarkıfelek, Turunç, Arnavut Biberi. Baharatın cesur dokunuşunu ferah notalarla buluşturan, karakteri güçlü bir imza kokteyl.",
-          "image": "https://img.gopos.com.tr/1/045696be-7e41-48dd-b2f7-24b0ce4ee4f8.webp",
+          "image": "/products/29-v2.webp",
           "id": "29"
         },
         {
           "name": "Velvet Kiss",
           "price": 300,
           "description": "Orman meyveleri ve limon",
-          "image": null,
+          "image": "/products/30-v2.webp",
           "id": "30"
         },
         {
           "name": "Kuzu Kulağı",
           "price": 300,
           "description": "Yeşil Elma , Kuzu Kulağı ve Limon",
-          "image": null,
+          "image": "/products/31-v2.webp",
           "id": "31"
         },
         {
           "name": "Redbull Mojito",
           "price": 340,
           "description": "Esmer Şeker , Nane , Lime ve Redbull",
-          "image": null,
+          "image": "/products/32-v2.webp",
           "id": "32"
         },
         {
           "name": "Berry Hibiscus",
           "price": 300,
           "description": "Hibiscus Çayı ve Orman Meyveleri",
-          "image": null,
+          "image": "/products/33-v2.webp",
           "id": "33"
         },
         {
           "name": "Cool Lime",
           "price": 300,
           "description": "Lime özü ve Su",
-          "image": null,
+          "image": "/products/34-v2.webp",
           "id": "34"
         },
         {
           "name": "Creamy Brezilian Lemonade",
           "price": 300,
           "description": "Limon ve Yoğunlaştırılmış Süt",
-          "image": null,
+          "image": "/products/35-v2.webp",
           "id": "35"
         }
       ]
@@ -279,35 +279,35 @@
           "name": "Caesary",
           "price": 470,
           "description": "Sezar sos, hindi füme, marul, parmesan peyniri, zeytinyağı, kuru domates.",
-          "image": "https://img.gopos.com.tr/5L13gNcyZE/721b9880-895e-437d-80e1-194f4cee4162.webp",
+          "image": "/products/36-v2.webp",
           "id": "36"
         },
         {
           "name": "Olive Garden",
           "price": 400,
           "description": "Zeytin pate, domates, mozarella, roka, balzamik glaze sos.",
-          "image": "https://img.gopos.com.tr/5L13gNcyZE/bb8a0513-2cd2-4886-8d52-09c610704596.webp",
+          "image": "/products/37-v2.webp",
           "id": "37"
         },
         {
           "name": "Truffle Roast",
           "price": 550,
           "description": "Karabiberli roast beef, kaymak peyniri, eski kaşar, trüflü Zoi sos, roka, pesto sos.",
-          "image": "https://img.gopos.com.tr/5L13gNcyZE/9674e462-b36b-4621-a5d2-c59faea396b3.webp",
+          "image": "/products/38-v2.webp",
           "id": "38"
         },
         {
           "name": "Anatolia Melt",
           "price": 550,
           "description": "Gorgonzola, dana bacon, kuru et, otlu kaymak kreması, domates, zeytinyağı.",
-          "image": "https://img.gopos.com.tr/5L13gNcyZE/420c7447-df14-477e-93a1-88096aee80e6.webp",
+          "image": "/products/39-v2.webp",
           "id": "39"
         },
         {
           "name": "Riviera",
           "price": 450,
           "description": "%100 İtalyan dana salam, kaymak peyniri, taze kaşar, çeçil, rus salatası, marul, salatalık turşusu, trüflü mayonez.",
-          "image": "https://img.gopos.com.tr/5L13gNcyZE/bfe7a3ce-2320-4f73-aebf-58f969128f6e.webp",
+          "image": "/products/40-v2.webp",
           "id": "40"
         }
       ]
@@ -319,21 +319,21 @@
           "name": "Bol Kaşarlı",
           "price": 320,
           "description": "Bazlama ekmeği, taze kaşar peyniri. Yanında patates kızartması ve turşu ile.",
-          "image": "https://img.gopos.com.tr/5L13gNcyZE/bd869036-0c57-40d1-b403-eaf7fdd5d140.webp",
+          "image": "/products/41-v2.webp",
           "id": "41"
         },
         {
           "name": "Geleneksel Sucuklu Kaşarlı",
           "price": 360,
           "description": "Bazlama ekmeği, sucuk, taze kaşar. Yanında patates kızartması ve turşu ile.",
-          "image": "https://img.gopos.com.tr/5L13gNcyZE/cebd29da-22a5-46ad-881e-e09f65363ab1.webp",
+          "image": "/products/42-v2.webp",
           "id": "42"
         },
         {
           "name": "Balkan Tost",
           "price": 390,
           "description": "Bazlama ekmeği, balkan sos, labne peyniri, kaşar ve kasap sucuk, kuru et. Yanında patates kızartması ve turşu ile.",
-          "image": "https://img.gopos.com.tr/5L13gNcyZE/68cfac11-e109-4342-9488-29937ebc2fe4.webp",
+          "image": "/products/43-v2.webp",
           "id": "43"
         }
       ]
@@ -345,21 +345,21 @@
           "name": "Combo Tabağı",
           "price": 500,
           "description": "Patates kızartması, çıtır tavuk parçaları, soğan halkası, mozarella sticks",
-          "image": "https://img.gopos.com.tr/5L13gNcyZE/7423c51e-4cdd-47cc-9219-9148d1edc75f.webp",
+          "image": "/products/44-v2.webp",
           "id": "44"
         },
         {
           "name": "Patates Kızartması",
           "price": 300,
           "description": "",
-          "image": "https://img.gopos.com.tr/5L13gNcyZE/36deab75-95b6-45a6-b84f-eca00c209b7f.webp",
+          "image": "/products/45-v2.webp",
           "id": "45"
         },
         {
           "name": "Çıpçıtır Tavuk Patates",
           "price": 440,
           "description": "",
-          "image": "https://img.gopos.com.tr/5L13gNcyZE/8a803db4-66dd-45a3-8908-9fb10feb7141.webp",
+          "image": "/products/46-v2.webp",
           "id": "46"
         }
       ]
@@ -371,14 +371,14 @@
           "name": "Fettucini Alfredo",
           "price": 450,
           "description": "Alfredo sos, tavuk, mantar",
-          "image": "https://img.gopos.com.tr/5L13gNcyZE/8a7931f5-f4db-4a3b-a5d8-b025141f8d7f.webp",
+          "image": "/products/47-v2.webp",
           "id": "47"
         },
         {
           "name": "Zoi Special Çıtır Mantı",
           "price": 480,
           "description": "Zoi özel ev yapımı mantı. Süzme yoğurt, kırmızı&yeşil yağ ile.",
-          "image": "https://img.gopos.com.tr/5L13gNcyZE/7b16127b-dddb-4cdc-ac3f-9cc07d807f0d.webp",
+          "image": "/products/48-v2.webp",
           "id": "48"
         }
       ]
@@ -390,28 +390,28 @@
           "name": "San Sebastian",
           "price": 370,
           "description": "",
-          "image": "https://img.gopos.com.tr/5L13gNcyZE/ac0cb53e-5227-4546-9b41-9c6524d49e48.webp",
+          "image": "/products/49-v2.webp",
           "id": "49"
         },
         {
           "name": "Tiramisu",
           "price": 390,
           "description": "",
-          "image": "https://img.gopos.com.tr/5L13gNcyZE/4ae32a1d-e67b-43dd-9a44-4bef5118e6b5.webp",
+          "image": "/products/50-v2.webp",
           "id": "50"
         },
         {
           "name": "Browni",
           "price": 390,
           "description": "Arası beyaz çikolata üstü ise belçika çikolatası sosu ile servis edilir",
-          "image": null,
+          "image": "/products/51-v2.webp",
           "id": "51"
         },
         {
           "name": "Zoi Profiterol",
           "price": 390,
           "description": "",
-          "image": null,
+          "image": "/products/52-v2.webp",
           "id": "52"
         }
       ]
@@ -423,7 +423,7 @@
           "name": "Dondurma",
           "price": 80,
           "description": "Kase, külah veya kornet külah tercihi ile. Çeşitler için bilgi alabilirsiniz.",
-          "image": "https://img.gopos.com.tr/5L13gNcyZE/ef9e5d92-36ea-4d98-bc39-18dc6a5f4761.webp",
+          "image": "/products/53-v2.webp",
           "id": "53"
         }
       ]
@@ -435,42 +435,42 @@
           "name": "Çilek Frozen",
           "price": 280,
           "description": "",
-          "image": null,
+          "image": "/products/54-v2.webp",
           "id": "54"
         },
         {
           "name": "Çarkıfelek Frozen",
           "price": 280,
           "description": "",
-          "image": null,
+          "image": "/products/55-v2.webp",
           "id": "55"
         },
         {
           "name": "Mango Frozen",
           "price": 280,
           "description": "",
-          "image": null,
+          "image": "/products/56-v2.webp",
           "id": "56"
         },
         {
           "name": "Çikolatalı Milkshake",
           "price": 300,
           "description": "Çikolatalı Dondurma ve Süt",
-          "image": null,
+          "image": "/products/57-v2.webp",
           "id": "57"
         },
         {
           "name": "Çilekli Milkshake",
           "price": 300,
           "description": "İçerik bilgisi için ekibimize danışabilirsiniz.",
-          "image": null,
+          "image": "/products/58-v2.webp",
           "id": "58"
         },
         {
           "name": "Vanilyalı Milkshake",
           "price": 300,
           "description": "Vanilyalı Dondurma ve Süt",
-          "image": null,
+          "image": "/products/59-v2.webp",
           "id": "59"
         }
       ]
@@ -482,7 +482,7 @@
           "name": "Türk Çayı",
           "price": 85,
           "description": "",
-          "image": "https://img.gopos.com.tr/5L13gNcyZE/116955e9-59bf-4223-b40b-cec8dd1897e4.webp",
+          "image": "/products/60-v2.webp",
           "id": "60"
         }
       ]
@@ -494,98 +494,98 @@
           "name": "Soda",
           "price": 100,
           "description": "",
-          "image": "https://img.gopos.com.tr/5L13gNcyZE/1546b1bf-812d-4c96-8a6c-5e831c2eb6fb.webp",
+          "image": "/products/61-v2.webp",
           "id": "61"
         },
         {
           "name": "Soda + Limon",
           "price": 120,
           "description": "",
-          "image": null,
+          "image": "/products/62-v2.webp",
           "id": "62"
         },
         {
           "name": "Churchill",
           "price": 130,
           "description": "",
-          "image": "https://img.gopos.com.tr/5L13gNcyZE/8703c832-54ca-4760-adcd-6678867b85e1.webp",
+          "image": "/products/63-v2.webp",
           "id": "63"
         },
         {
           "name": "Avşar",
           "price": 120,
           "description": "",
-          "image": "https://img.gopos.com.tr/5L13gNcyZE/6bc5f09a-1a77-403f-bfa0-d6997d5aa7a8.webp",
+          "image": "/products/64-v2.webp",
           "id": "64"
         },
         {
           "name": "Coca Cola",
           "price": 130,
           "description": "",
-          "image": "https://img.gopos.com.tr/5L13gNcyZE/b1a1f4fc-e131-41ea-831a-b31b56dcb9bc.webp",
+          "image": "/products/65-v2.webp",
           "id": "65"
         },
         {
           "name": "Coca Cola Zero",
           "price": 130,
           "description": "",
-          "image": "https://img.gopos.com.tr/5L13gNcyZE/55b413ef-c1a1-4f11-b107-471254b44347.webp",
+          "image": "/products/66-v2.webp",
           "id": "66"
         },
         {
           "name": "Sprite",
           "price": 130,
           "description": "",
-          "image": "https://img.gopos.com.tr/5L13gNcyZE/391c413a-deaa-4e38-be69-b2fadfa1107e.webp",
+          "image": "/products/67-v2.webp",
           "id": "67"
         },
         {
           "name": "Fanta",
           "price": 130,
           "description": "",
-          "image": "https://img.gopos.com.tr/5L13gNcyZE/fb588240-d18f-4dc7-8a53-b70c6b899d93.webp",
+          "image": "/products/68-v2.webp",
           "id": "68"
         },
         {
           "name": "Redbull",
           "price": 250,
           "description": "",
-          "image": "https://img.gopos.com.tr/5L13gNcyZE/1ca93952-d55a-43e0-abfa-206a8b3bd356.webp",
+          "image": "/products/69-v2.webp",
           "id": "69"
         },
         {
           "name": "Limonata",
           "price": 180,
           "description": "",
-          "image": null,
+          "image": "/products/70-v2.webp",
           "id": "70"
         },
         {
           "name": "Cappy",
           "price": 130,
           "description": "",
-          "image": "https://img.gopos.com.tr/5L13gNcyZE/db8bfe57-6546-4cf2-9fb9-f0ea02e7b796.webp",
+          "image": "/products/71-v2.webp",
           "id": "71"
         },
         {
           "name": "Ice Tea",
           "price": 130,
           "description": "",
-          "image": "https://img.gopos.com.tr/5L13gNcyZE/be1ad297-8144-415d-b90f-064d9b4d76ad.webp",
+          "image": "/products/72-v2.webp",
           "id": "72"
         },
         {
           "name": "Su",
           "price": 70,
           "description": "",
-          "image": "https://img.gopos.com.tr/5L13gNcyZE/168e2e1b-4096-4737-8c75-8d06bc17f5d4.webp",
+          "image": "/products/73-v2.webp",
           "id": "73"
         },
         {
           "name": "San Pellegrino",
           "price": 170,
           "description": "",
-          "image": "https://img.gopos.com.tr/5L13gNcyZE/82b35a0b-d45a-48ab-a8b2-4f91445d03e1.webp",
+          "image": "/products/74-v2.webp",
           "id": "74"
         }
       ]
@@ -597,7 +597,7 @@
           "name": "Lüks Çerez",
           "price": 320,
           "description": "",
-          "image": null,
+          "image": "/products/75-v2.webp",
           "id": "75"
         }
       ]
@@ -609,7 +609,7 @@
           "name": "Şarjmatik",
           "price": 100,
           "description": "",
-          "image": null,
+          "image": "/products/76-v2.webp",
           "id": "76"
         }
       ]
