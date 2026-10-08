@@ -14,7 +14,7 @@
         },
         {
           "name": "Americano",
-          "price": 190,
+          "price": 200,
           "description": "",
           "image": "/products/2.webp",
           "id": "2"
@@ -28,35 +28,35 @@
         },
         {
           "name": "Cafe Latte",
-          "price": 230,
+          "price": 240,
           "description": "",
           "image": "/products/4.webp",
           "id": "4"
         },
         {
           "name": "Tahinli Latte",
-          "price": 250,
+          "price": 260,
           "description": "",
           "image": "/products/5.webp",
           "id": "5"
         },
         {
           "name": "Piccolo Latte",
-          "price": 200,
+          "price": 210,
           "description": "",
           "image": "/products/6.png",
           "id": "6"
         },
         {
           "name": "Flat White",
-          "price": 230,
+          "price": 240,
           "description": "",
           "image": "/products/7.webp",
           "id": "7"
         },
         {
           "name": "Cortado",
-          "price": 210,
+          "price": 220,
           "description": "",
           "image": "/products/8.png",
           "id": "8"
@@ -70,28 +70,28 @@
         },
         {
           "name": "Mocha",
-          "price": 230,
+          "price": 240,
           "description": "",
           "image": "/products/10.webp",
           "id": "10"
         },
         {
           "name": "White Chocolate Mocha",
-          "price": 250,
+          "price": 260,
           "description": "",
           "image": "/products/11.webp",
           "id": "11"
         },
         {
           "name": "Filtre Kahve",
-          "price": 210,
+          "price": 220,
           "description": "",
           "image": "/products/12.webp",
           "id": "12"
         },
         {
           "name": "Macchiato",
-          "price": 160,
+          "price": 180,
           "description": "",
           "image": "/products/13.webp",
           "id": "13"
@@ -103,28 +103,28 @@
       "items": [
         {
           "name": "Zebra Mocha",
-          "price": 250,
+          "price": 260,
           "description": "",
           "image": "/products/14.png",
           "id": "14"
         },
         {
           "name": "Caffe Miel",
-          "price": 270,
+          "price": 280,
           "description": "",
           "image": "/products/15.webp",
           "id": "15"
         },
         {
           "name": "Crazy Mocha",
-          "price": 250,
+          "price": 260,
           "description": "",
           "image": "/products/16.png",
           "id": "16"
         },
         {
           "name": "Raspberry Mocha",
-          "price": 250,
+          "price": 260,
           "description": "",
           "image": "/products/17.png",
           "id": "17"
@@ -136,56 +136,56 @@
       "items": [
         {
           "name": "Ice Latte",
-          "price": 280,
+          "price": 290,
           "description": "",
           "image": "/products/18.png",
           "id": "18"
         },
         {
           "name": "Ice Americano",
-          "price": 260,
+          "price": 270,
           "description": "",
           "image": "/products/19.png",
           "id": "19"
         },
         {
           "name": "Ice Mocha",
-          "price": 280,
+          "price": 290,
           "description": "",
           "image": "/products/20.png",
           "id": "20"
         },
         {
           "name": "Ice Filtre",
-          "price": 270,
+          "price": 280,
           "description": "",
           "image": "/products/21.png",
           "id": "21"
         },
         {
           "name": "Ice Zebra Mocha",
-          "price": 290,
+          "price": 300,
           "description": "",
           "image": "/products/22.png",
           "id": "22"
         },
         {
           "name": "Ice White Mocha",
-          "price": 290,
+          "price": 300,
           "description": "",
           "image": "/products/23.png",
           "id": "23"
         },
         {
           "name": "Ice Flat White",
-          "price": 290,
+          "price": 300,
           "description": "",
           "image": "/products/24.png",
           "id": "24"
         },
         {
           "name": "Affogato",
-          "price": 250,
+          "price": 260,
           "description": "",
           "image": "/products/25.png",
           "id": "25"
@@ -480,7 +480,7 @@
       "items": [
         {
           "name": "Türk Çayı",
-          "price": 85,
+          "price": 90,
           "description": "",
           "image": "/products/60-v2.webp",
           "id": "60"
@@ -492,21 +492,21 @@
       "items": [
         {
           "name": "Soda",
-          "price": 100,
+          "price": 110,
           "description": "",
           "image": "/products/61-v2.webp",
           "id": "61"
         },
         {
           "name": "Soda + Limon",
-          "price": 120,
+          "price": 130,
           "description": "",
           "image": "/products/62-v2.webp",
           "id": "62"
         },
         {
           "name": "Churchill",
-          "price": 130,
+          "price": 140,
           "description": "",
           "image": "/products/63-v2.webp",
           "id": "63"
@@ -534,49 +534,49 @@
         },
         {
           "name": "Sprite",
-          "price": 130,
+          "price": 140,
           "description": "",
           "image": "/products/67-v2.webp",
           "id": "67"
         },
         {
           "name": "Fanta",
-          "price": 130,
+          "price": 140,
           "description": "",
           "image": "/products/68-v2.webp",
           "id": "68"
         },
         {
           "name": "Redbull",
-          "price": 250,
+          "price": 260,
           "description": "",
           "image": "/products/69-v2.webp",
           "id": "69"
         },
         {
           "name": "Limonata",
-          "price": 180,
+          "price": 190,
           "description": "",
           "image": "/products/70-v2.webp",
           "id": "70"
         },
         {
           "name": "Cappy",
-          "price": 130,
+          "price": 140,
           "description": "",
           "image": "/products/71-v2.webp",
           "id": "71"
         },
         {
           "name": "Ice Tea",
-          "price": 130,
+          "price": 140,
           "description": "",
           "image": "/products/72-v2.webp",
           "id": "72"
         },
         {
           "name": "Su",
-          "price": 70,
+          "price": 75,
           "description": "",
           "image": "/products/73-v2.webp",
           "id": "73"
