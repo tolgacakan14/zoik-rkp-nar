@@ -24,18 +24,18 @@ const heroBulbs: Array<[number, number, number]> = [
   [321.4, 163.1, 32], [352.6, 159.7, 50], [383.8, 155.3, 36],
 ];
 const oliveBranches: Array<[string, number]> = [
-  ['M86 286 C59 269 45 247 33 220 C27 204 19 192 8 183',.04],
-  ['M79 260 C55 239 51 214 52 188 C52 166 43 143 27 124',.1],
-  ['M80 225 C62 205 64 180 67 159 C69 136 60 115 46 97',.17],
-  ['M82 193 C75 168 80 145 89 124 C96 107 98 89 94 70',.25],
-  ['M84 276 C108 257 121 235 126 210 C131 188 143 170 165 155',.07],
-  ['M82 243 C109 225 112 199 110 177 C109 155 119 133 140 113',.14],
-  ['M82 210 C104 191 105 166 102 143 C100 122 111 99 130 80',.22],
-  ['M84 174 C100 153 101 130 98 110 C96 89 104 68 119 48',.3],
-  ['M34 220 C20 215 11 205 4 193',.34],['M52 188 C35 181 23 168 16 151',.39],
-  ['M67 159 C51 151 41 138 35 121',.44],['M89 124 C76 112 71 98 70 82',.49],
-  ['M126 210 C144 205 158 194 173 178',.37],['M110 177 C130 169 145 155 155 139',.42],
-  ['M102 143 C121 133 133 117 140 99',.47],['M98 110 C113 99 123 84 128 65',.53],
+  ['M84 278 C65 252 47 235 20 224 C12 221 7 216 3 209',.02],
+  ['M82 253 C61 226 39 213 12 201',.07],
+  ['M83 232 C64 204 44 190 18 180 C10 177 5 171 2 164',.13],
+  ['M85 216 C73 188 64 163 65 137 C65 119 59 105 48 91',.22],
+  ['M88 278 C108 251 127 235 155 225 C165 221 173 215 179 207',.04],
+  ['M88 251 C109 226 131 211 166 198',.09],
+  ['M88 231 C107 204 128 189 158 179 C168 175 175 168 179 159',.16],
+  ['M88 214 C100 187 108 163 107 136 C107 116 114 98 127 82',.24],
+  ['M38 219 C29 203 25 188 26 171',.3],['M51 207 C39 190 36 174 38 155',.35],
+  ['M65 190 C52 173 48 154 50 134',.4],['M67 139 C78 119 83 101 81 81',.46],
+  ['M140 217 C151 201 155 185 154 168',.32],['M127 205 C140 189 144 171 142 151',.37],
+  ['M111 188 C125 171 130 152 128 131',.42],['M107 137 C97 116 94 97 97 75',.48],
 ];
 const oliveLeaves: Array<[number, number, number, number]> = [
   [10,184,-63,.22],[18,193,-28,.26],[25,207,-61,.3],[35,215,-19,.34],[20,159,-59,.38],[29,169,-19,.41],
@@ -58,13 +58,16 @@ function OliveTree({ side }: { side: 'left' | 'right' }) {
       {oliveBranches.map(([d,reveal],index)=><path key={index} className={index<8?'olive-branch olive-scaffold':'olive-branch'} pathLength={1} d={d} style={{'--branch-at':reveal} as CSSProperties}/>)}
     </g>
     <g className="olive-crown">
-      {oliveLeaves.filter((_,index)=>index%4!==3).map(([x,y,rotation,reveal],index)=><g className="olive-leaflet" key={`${x}-${y}`} transform={`translate(${x} ${y}) rotate(${rotation})`} style={{'--leaf-at':reveal} as CSSProperties}>
+      {oliveLeaves.filter((_,index)=>index%4!==3).map(([x,y,rotation,reveal],index)=><g className={`olive-leaflet ${index<7||index%10===0?'olive-signature':''}`} key={`${x}-${y}`} transform={`translate(${x} ${y}) rotate(${rotation})`} style={{'--leaf-at':reveal} as CSSProperties}>
         <path className="olive-leaf" d={index%3===0?'M0 -9 C3.6 -5.8 3.8 1.5 -.4 9 C-3.1 4.8 -3.4 -2.8 0 -9Z':'M0 -8.5 C3 -5.2 3.4 1.8 0 8.5 C-3.5 4.2 -3 -2.3 0 -8.5Z'}/>
         {index%2===0&&<path className="olive-leaf-vein" d="M0 -6.5 C.2 -2 .1 2.5 0 6"/>}
       </g>)}
-      <circle className="olive-fruit" cx="45" cy="211" r="3.2" style={{'--leaf-at':.72} as CSSProperties}/>
-      <circle className="olive-fruit" cx="96" cy="174" r="3.1" style={{'--leaf-at':.78} as CSSProperties}/>
-      <circle className="olive-fruit" cx="60" cy="108" r="2.8" style={{'--leaf-at':.84} as CSSProperties}/>
+      <circle className="olive-fruit olive-signature-fruit" cx="43" cy="211" r="3.5" style={{'--leaf-at':.12} as CSSProperties}/>
+      <circle className="olive-fruit" cx="95" cy="174" r="3.3" style={{'--leaf-at':.48} as CSSProperties}/>
+      <circle className="olive-fruit" cx="59" cy="108" r="3.1" style={{'--leaf-at':.62} as CSSProperties}/>
+      <circle className="olive-fruit" cx="128" cy="202" r="3.4" style={{'--leaf-at':.56} as CSSProperties}/>
+      <circle className="olive-fruit" cx="31" cy="162" r="3" style={{'--leaf-at':.7} as CSSProperties}/>
+      <circle className="olive-fruit" cx="142" cy="151" r="3.2" style={{'--leaf-at':.76} as CSSProperties}/>
     </g>
   </svg>;
 }
