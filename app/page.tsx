@@ -58,7 +58,10 @@ function OliveTree({ side }: { side: 'left' | 'right' }) {
       {oliveBranches.map(([d,reveal],index)=><path key={index} className={index<8?'olive-branch olive-scaffold':'olive-branch'} pathLength={1} d={d} style={{'--branch-at':reveal} as CSSProperties}/>)}
     </g>
     <g className="olive-crown">
-      {oliveLeaves.map(([x,y,rotation,reveal],index)=><g key={index} transform={`translate(${x} ${y}) rotate(${rotation})`}><ellipse className="olive-leaf" cx="0" cy="0" rx="3.3" ry="9.6" style={{'--leaf-at':reveal} as CSSProperties}/></g>)}
+      {oliveLeaves.filter((_,index)=>index%4!==3).map(([x,y,rotation,reveal],index)=><g className="olive-leaflet" key={`${x}-${y}`} transform={`translate(${x} ${y}) rotate(${rotation})`} style={{'--leaf-at':reveal} as CSSProperties}>
+        <path className="olive-leaf" d={index%3===0?'M0 -9 C3.6 -5.8 3.8 1.5 -.4 9 C-3.1 4.8 -3.4 -2.8 0 -9Z':'M0 -8.5 C3 -5.2 3.4 1.8 0 8.5 C-3.5 4.2 -3 -2.3 0 -8.5Z'}/>
+        {index%2===0&&<path className="olive-leaf-vein" d="M0 -6.5 C.2 -2 .1 2.5 0 6"/>}
+      </g>)}
       <circle className="olive-fruit" cx="45" cy="211" r="3.2" style={{'--leaf-at':.72} as CSSProperties}/>
       <circle className="olive-fruit" cx="96" cy="174" r="3.1" style={{'--leaf-at':.78} as CSSProperties}/>
       <circle className="olive-fruit" cx="60" cy="108" r="2.8" style={{'--leaf-at':.84} as CSSProperties}/>

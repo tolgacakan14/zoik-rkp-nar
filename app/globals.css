@@ -487,18 +487,21 @@ button{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 .brand-symbol img{position:static;width:100%;height:100%;max-width:100%;object-fit:cover}
 .hero{min-height:430px;background:linear-gradient(180deg,#faf7efd8 0%,#f2eddfeb 68%,#ece5d7f5 100%),url('/stone-wall.jpg') center top/760px auto repeat}
 .hero{--olive-progress:0}
-.olive-tree{position:absolute;z-index:0;bottom:-7px;width:clamp(154px,22%,196px);height:92%;overflow:visible;pointer-events:none;opacity:.82;filter:drop-shadow(0 10px 10px rgba(47,67,56,.07));mix-blend-mode:multiply}
+.olive-tree{position:absolute;z-index:0;bottom:-7px;width:clamp(150px,21%,188px);height:91%;overflow:visible;pointer-events:none;opacity:.75;filter:drop-shadow(0 8px 9px rgba(47,67,56,.045));mix-blend-mode:multiply}
 .olive-tree-left{left:clamp(-20px,-1vw,-4px)}
 .olive-tree-right{right:clamp(-20px,-1vw,-4px);transform:scaleX(-1)}
 .olive-wood path{fill:none;stroke:#536c5f;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
-.olive-wood .olive-trunk-fill{fill:#6f7768;fill-opacity:.13;stroke:#4d6255;stroke-width:1.05}
-.olive-wood .olive-trunk{stroke:#3f594d;stroke-width:1.65;stroke-dasharray:1;stroke-dashoffset:1;animation:olive-draw 1.15s .08s cubic-bezier(.22,.75,.2,1) forwards}
-.olive-wood .olive-bark{stroke:#718275;stroke-width:.72;opacity:.65}
+.olive-wood .olive-trunk-fill{fill:none;stroke:#89978a;stroke-width:3.25;stroke-opacity:.24}
+.olive-wood .olive-trunk{stroke:#405b4e;stroke-width:1.42;stroke-dasharray:1;stroke-dashoffset:1;animation:olive-draw 1.15s .08s cubic-bezier(.22,.75,.2,1) forwards}
+.olive-wood .olive-bark{stroke:#718275;stroke-width:.66;opacity:.58;stroke-dasharray:4 3}
 .olive-wood .olive-root{stroke:#536c5f;stroke-width:1.15;opacity:.7}
-.olive-wood .olive-branch{stroke:#4c6759;stroke-width:1.18;stroke-dasharray:1;stroke-dashoffset:clamp(0,calc(1 - (var(--olive-progress) - var(--branch-at)) * 4.8),1);opacity:clamp(.08,calc((var(--olive-progress) - var(--branch-at)) * 6 + .08),1);transition:stroke-dashoffset .12s linear,opacity .12s linear}
+.olive-wood .olive-branch{stroke:#506b5d;stroke-width:1.02;stroke-dasharray:1;stroke-dashoffset:clamp(0,calc(1 - (var(--olive-progress) - var(--branch-at)) * 4.8),1);opacity:clamp(.08,calc((var(--olive-progress) - var(--branch-at)) * 6 + .08),1);transition:stroke-dashoffset .12s linear,opacity .12s linear}
+.olive-wood .olive-branch:nth-of-type(3n){stroke-width:.78;stroke:#667d70}.olive-wood .olive-branch:nth-of-type(4n){stroke-width:1.16}
 .olive-wood .olive-scaffold{stroke-dashoffset:clamp(0,calc(.58 - var(--olive-progress) * 1.9),.58);opacity:clamp(.56,calc(.56 + var(--olive-progress) * .44),1)}
-.olive-leaf{fill:#82947c;stroke:#496958;stroke-width:.4;vector-effect:non-scaling-stroke;transform-box:fill-box;transform-origin:center;opacity:clamp(0,calc((var(--olive-progress) - var(--leaf-at)) * 8),.94);transform:scale(clamp(.05,calc((var(--olive-progress) - var(--leaf-at)) * 8),1));transition:opacity .13s linear,transform .2s cubic-bezier(.2,.8,.2,1)}
-.olive-crown g:nth-child(3n) .olive-leaf{fill:#a2ad96}.olive-crown g:nth-child(4n) .olive-leaf{fill:#718a73}
+.olive-leaflet{transform-box:fill-box;transform-origin:center;opacity:clamp(0,calc((var(--olive-progress) - var(--leaf-at)) * 8),.9);transition:opacity .13s linear}
+.olive-leaf{fill:#92a18b;fill-opacity:.42;stroke:#496958;stroke-width:.55;vector-effect:non-scaling-stroke;transform-box:fill-box;transform-origin:center;transform:scale(clamp(.05,calc((var(--olive-progress) - var(--leaf-at)) * 8),1));transition:transform .2s cubic-bezier(.2,.8,.2,1)}
+.olive-leaf-vein{fill:none;stroke:#5c7566;stroke-width:.34;stroke-linecap:round;vector-effect:non-scaling-stroke;opacity:.56}
+.olive-crown .olive-leaflet:nth-child(3n) .olive-leaf{fill:#aab49e}.olive-crown .olive-leaflet:nth-child(5n) .olive-leaf{fill:#718a73;fill-opacity:.34}
 .olive-fruit{fill:#394e42;stroke:#f4efe3;stroke-width:.65;vector-effect:non-scaling-stroke;transform-box:fill-box;transform-origin:center;opacity:clamp(0,calc((var(--olive-progress) - var(--leaf-at)) * 9),1);transform:scale(clamp(.05,calc((var(--olive-progress) - var(--leaf-at)) * 9),1));transition:opacity .14s linear,transform .22s cubic-bezier(.2,.8,.2,1)}
 @keyframes olive-draw{to{stroke-dashoffset:0}}
 .hero-line-art{top:3%;width:min(76%,390px);height:auto;opacity:.82}
@@ -552,7 +555,7 @@ button{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 @media(max-width:600px){
   .brand-header{padding:11px 17px 9px}.brand-symbol{width:72px;height:36px}
   .hero{height:54dvh;min-height:390px;max-height:520px}
-  .olive-tree{bottom:-7px;width:148px;height:86%;opacity:.78}
+  .olive-tree{bottom:-7px;width:142px;height:85%;opacity:.72}
   .olive-tree-left{left:-10px}.olive-tree-right{right:-10px}
   .hero-line-art{top:4%;width:86%;max-height:230px}
   .hero-copy{gap:6px;padding:0 20px 38px}
@@ -565,7 +568,7 @@ button{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
   .detail-navigation button{width:31px;height:31px}
   .aroma-status{margin-bottom:2px}
 }
-@media(prefers-reduced-motion:reduce){.hero-brandmark,.hero-cta::before,.detail-dialog .detail-image>img,.detail-dialog .detail-body>*,.flavor-card.picked::after{animation:none;opacity:1;transform:none}.olive-wood .olive-trunk{animation:none;stroke-dashoffset:0}.olive-wood .olive-branch{stroke-dashoffset:0;opacity:1}.olive-leaf,.olive-fruit{transition:none;opacity:.94;transform:scale(1)}}
+@media(prefers-reduced-motion:reduce){.hero-brandmark,.hero-cta::before,.detail-dialog .detail-image>img,.detail-dialog .detail-body>*,.flavor-card.picked::after{animation:none;opacity:1;transform:none}.olive-wood .olive-trunk{animation:none;stroke-dashoffset:0}.olive-wood .olive-branch{stroke-dashoffset:0;opacity:1}.olive-leaflet,.olive-fruit{transition:none;opacity:.9}.olive-leaf{transition:none;transform:scale(1)}}
 
 /* Glass editorial product sheet and a richer cross-menu pairing card. */
 [data-slot=dialog-overlay]{background:rgba(20,45,38,.5)!important;backdrop-filter:blur(17px) saturate(112%)}
