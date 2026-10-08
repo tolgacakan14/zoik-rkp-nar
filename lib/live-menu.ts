@@ -82,12 +82,14 @@ export function menuFromCsv(csv: string): LiveMenu {
     });
     const stockText = get(row, 'stok_adedi');
     const stock = stockText === '' ? null : numeric(stockText, 0);
+    const sheetImage = get(row, 'görsel_url');
+    const image = sheetImage && !sheetImage.includes('img.gopos.com.tr') ? sheetImage : fallback?.image || sheetImage || null;
     groups.get(category)!.items.push({
       id,
       name,
       price: numeric(get(row, 'fiyat'), fallback?.price ?? 0),
       description: get(row, 'açıklama') || fallback?.description || '',
-      image: get(row, 'görsel_url') || fallback?.image || null,
+      image,
       soldOut: visibility === 'tükendi' || stock === 0,
       character: get(row, 'karakter') || undefined,
       intensity: Math.min(4, Math.max(1, numeric(get(row, 'yoğunluk'), 2))),
