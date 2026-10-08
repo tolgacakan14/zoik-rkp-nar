@@ -1,5 +1,6 @@
 import fallbackMenu from '@/data/menu.json';
 import { hookahFlavors as fallbackHookah, type HookahFlavor } from '@/data/hookah';
+import goposSync from '@/data/gopos-prices.json';
 
 export type LiveMenuItem = {
   id: string;
@@ -87,7 +88,7 @@ export function menuFromCsv(csv: string): LiveMenu {
     groups.get(category)!.items.push({
       id,
       name,
-      price: numeric(get(row, 'fiyat'), fallback?.price ?? 0),
+      price: Number((goposSync.products as Record<string, number>)[id]) || numeric(get(row, 'fiyat'), fallback?.price ?? 0),
       description: get(row, 'açıklama') || fallback?.description || '',
       image,
       soldOut: visibility === 'tükendi' || stock === 0,
@@ -141,5 +142,6 @@ export function settingsFromCsv(csv: string): LiveSettings {
     headChange: values.get('kafa_degisim') || defaultSettings.headChange,
     iceHose: values.get('buzlu_marpuc') || defaultSettings.iceHose,
     maxAromas: Math.min(2, Math.max(1, values.get('maks_aroma') || defaultSettings.maxAromas)),
+    ...(goposSync.settings as Partial<LiveSettings>),
   };
 }

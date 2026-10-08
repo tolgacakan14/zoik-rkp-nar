@@ -1,0 +1,40 @@
+name: GoPOS fiyat senkronu
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '*/15 * * * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: gopos-price-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Playwright yükle
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+      - name: GoPOS fiyatlarını al
+        run: node scripts/sync-gopos-prices.mjs
+      - name: Değişiklik varsa yayınla
+        run: |
+          if git diff --quiet -- data/menu.json data/gopos-prices.json; then
+            echo "Fiyat değişikliği yok."
+            exit 0
+          fi
+          git config user.name "zoi-menu-sync"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/menu.json data/gopos-prices.json
+          git commit -m "Sync prices from GoPOS"
+          git push
