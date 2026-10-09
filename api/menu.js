@@ -1,13 +1,21 @@
 const spreadsheetId = '1TZL5VfTyn5ysH1DGdNKimF7F2lkkZHAK2OQD3LV7GKk';
 const csvUrl = sheet => `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheet)}`;
 
-export default async function handler(_request, response) {
+const MAX_SHEET_BYTES = 1_000_000;
+
+export default async function handler(request, response) {
+  response.setHeader('X-Content-Type-Options', 'nosniff');
+  if (request.method !== 'GET') {
+    response.setHeader('Allow', 'GET');
+    return response.status(405).json({ error: 'Yalnızca GET desteklenir.' });
+  }
   try {
     const names = ['Menü', 'Nargile', 'Ayarlar'];
     const results = await Promise.all(names.map(async name => {
       const result = await fetch(csvUrl(name), { signal: AbortSignal.timeout(5000), cache: 'no-store' });
       if (!result.ok) throw new Error(`${name}: Google Sheets ${result.status}`);
       const text = await result.text();
+      if (Buffer.byteLength(text, 'utf8') > MAX_SHEET_BYTES) throw new Error(`${name}: veri boyutu sınırı aşıldı`);
       if (!text.includes(',')) throw new Error(`${name}: geçersiz CSV`);
       return text;
     }));

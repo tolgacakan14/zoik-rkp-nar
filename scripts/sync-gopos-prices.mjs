@@ -4,10 +4,12 @@ import fs from 'node:fs/promises';
 const source = 'https://zoikirkpinar.gopos.com.tr/web-qr-menu';
 const menuPath = new URL('../data/menu.json', import.meta.url);
 const pricesPath = new URL('../data/gopos-prices.json', import.meta.url);
+const MIN_PRICE = 1;
+const MAX_PRICE = 10_000;
 const normalize = value => value.toLocaleLowerCase('tr-TR').normalize('NFKD').replace(/[\u0300-\u036f]/g, '').replace(/ı/g, 'i').replace(/[^a-z0-9]+/g, ' ').trim();
 const parsePrice = value => {
   const parsed = Number(value.replace(/[^\d,.-]/g, '').replace('.', '').replace(',', '.'));
-  return Number.isFinite(parsed) ? parsed : null;
+  return Number.isFinite(parsed) && parsed >= MIN_PRICE && parsed <= MAX_PRICE ? parsed : null;
 };
 const mode = values => {
   const counts = new Map();
@@ -26,7 +28,7 @@ try {
     name: card.querySelector('.product-name')?.textContent?.trim() || '',
     priceText: card.querySelector('.product-price')?.textContent?.trim() || '',
   })));
-  if (scraped.length < 60) throw new Error(`GoPOS eksik yüklendi: ${scraped.length} ürün`);
+  if (scraped.length < 60 || scraped.length > 250) throw new Error(`GoPOS beklenmeyen ürün sayısı: ${scraped.length}`);
   const rows = scraped.map(row => ({ ...row, key: normalize(row.name), price: parsePrice(row.priceText) })).filter(row => row.name && row.price !== null);
   const byName = new Map();
   for (const row of rows) if (!byName.has(row.key)) byName.set(row.key, row);

@@ -51,6 +51,15 @@ const numeric = (value: string, fallback: number) => {
   return Number.isFinite(parsed) ? parsed : fallback;
 };
 const status = (value: string) => value.trim().toLocaleLowerCase('tr-TR');
+const safeImageUrl = (value: string) => {
+  if (!value) return '';
+  try {
+    const url = new URL(value, window.location.origin);
+    return url.protocol === 'https:' || (url.protocol === 'http:' && url.hostname === 'localhost') ? value : '';
+  } catch {
+    return '';
+  }
+};
 
 function reader(csv: string) {
   const [headerRow, ...rows] = parseCsv(csv);
@@ -83,7 +92,7 @@ export function menuFromCsv(csv: string): LiveMenu {
     });
     const stockText = get(row, 'stok_adedi');
     const stock = stockText === '' ? null : numeric(stockText, 0);
-    const sheetImage = get(row, 'görsel_url');
+    const sheetImage = safeImageUrl(get(row, 'görsel_url'));
     const image = sheetImage && !sheetImage.includes('img.gopos.com.tr') ? sheetImage : fallback?.image || sheetImage || null;
     groups.get(category)!.items.push({
       id,
