@@ -53,9 +53,17 @@ try {
     ...(headChange !== undefined ? { headChange } : {}),
     ...(iceHose !== undefined ? { iceHose } : {}),
   };
+  const previous = JSON.parse(await fs.readFile(pricesPath, 'utf8'));
+  const unchanged = JSON.stringify(previous.products || {}) === JSON.stringify(products)
+    && JSON.stringify(previous.settings || {}) === JSON.stringify(settings);
+  if (unchanged) {
+    console.log(`GoPOS fiyat değişikliği yok: ${Object.keys(products).length} ürün doğrulandı.`);
+    process.exitCode = 0;
+  } else {
   await fs.writeFile(menuPath, `${JSON.stringify(menu, null, 2)}\n`);
   await fs.writeFile(pricesPath, `${JSON.stringify({ source, syncedAt: new Date().toISOString(), products, settings }, null, 2)}\n`);
   console.log(`GoPOS senkronu tamamlandı: ${Object.keys(products).length} ürün, ${rows.length} fiyat satırı.`);
+  }
 } finally {
   await browser.close();
 }
