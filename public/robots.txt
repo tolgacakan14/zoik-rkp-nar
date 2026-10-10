@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://zoik-rkp-nar-v2gz.vercel.app/sitemap.xml

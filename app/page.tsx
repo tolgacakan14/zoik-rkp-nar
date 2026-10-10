@@ -1,6 +1,6 @@
 'use client';
 import { lazy, Suspense, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
-import { ArrowUpRight, Search, X, Coffee, IceCreamBowl, Utensils, LayoutGrid, List, ChevronRight, ChevronLeft, ChevronDown, Check } from 'lucide-react';
+import { ArrowUpRight, Search, X, Coffee, IceCreamBowl, Utensils, LayoutGrid, List, ChevronRight, ChevronLeft, ChevronDown, Check, QrCode, Download } from 'lucide-react';
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog-local';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { hookahFlavors, type HookahFlavor } from '@/data/hookah';
@@ -87,6 +87,7 @@ export default function Home() {
   const [visibleCount,setVisibleCount]=useState(6);
   const loadMoreRef=useRef<HTMLDivElement|null>(null);
   const [categoriesOpen,setCategoriesOpen]=useState(false);
+  const [qrOpen,setQrOpen]=useState(false);
   const [educationOpen,setEducationOpen]=useState(false);
   const [hookahDetail,setHookahDetail]=useState(false);
   const [hookahLine,setHookahLine]=useState<'classic'|'dark'>('classic');
@@ -223,7 +224,7 @@ export default function Home() {
       {results.length?<><div className={'product-grid '+(view==='list'?'list-view':'')} key={category+normalized+view}>{results.slice(0,visibleCount).map((item,index)=><button className={'menu-card '+(item.soldOut?'sold-out':'')} style={{'--reveal-order':index%6} as CSSProperties} key={item.id} onClick={()=>setSelected(item)}><div className="card-image"><ProductImage item={item}/>{item.soldOut&&<span className="sold-out-badge">Tükendi</span>}</div><div className="card-content"><h3>{item.name}</h3><div className="card-bottom"><strong>{item.soldOut?'Bugün yok':<>{item.price.toLocaleString('tr-TR')}<span>₺</span></>}</strong></div></div></button>)}</div>{visibleCount<results.length&&<div className="more-products" ref={loadMoreRef}><button onClick={()=>setVisibleCount(count=>Math.min(count+6,results.length))}>6 ürün daha göster <ChevronDown size={16}/></button></div>}</>:<div className="empty-results"><Search size={30} strokeWidth={1}/><h3>Sonuç yok</h3><button onClick={()=>setQuery('')}>Menüye dön</button></div>}
       <button className="all-categories-button" onClick={()=>setCategoriesOpen(true)}>Tüm menü<span>Kategorileri gör <ChevronDown size={16}/></span></button>
     </section>
-    <footer className="menu-footer"><span>zoi <small>KIRKPINAR</small></span><p>Alerjen ve içerik bilgisi için ekibimize danışabilirsin.</p><a className="menu-credit-link" href="https://tab-marketing-site.vercel.app/" target="_blank" rel="noreferrer" aria-label="Tab Marketing sitesini aç">Menü tasarımı · Tab Marketing</a></footer>
+    <footer className="menu-footer"><span>zoi <small>KIRKPINAR</small></span><p>Alerjen ve içerik bilgisi için ekibimize danışabilirsin.</p><button className="menu-qr-button" onClick={()=>setQrOpen(true)}><QrCode size={15}/> Menü QR kodu</button><a className="menu-credit-link" href="https://tab-marketing-site.vercel.app/" target="_blank" rel="noreferrer" aria-label="Tab Marketing sitesini aç">Menü tasarımı · Tab Marketing</a></footer>
     <Dialog open={Boolean(selected)} onOpenChange={open=>{if(!open)setSelected(null)}}>
       <DialogContent className="detail-dialog" showCloseButton={false}>{selected&&<>
         <DialogClose className="dialog-dismiss" aria-label="Ürün detayını kapat">Kapat <X size={17}/></DialogClose>
@@ -242,6 +243,15 @@ export default function Home() {
       </>}</DialogContent>
     </Dialog>
     <Dialog open={categoriesOpen} onOpenChange={setCategoriesOpen}><DialogContent className="categories-dialog" showCloseButton={false}><div className="categories-dialog-heading"><div><DialogTitle>Kategoriler</DialogTitle><DialogDescription>Bugün canın ne çekiyor?</DialogDescription></div><DialogClose className="icon-button" aria-label="Kategorileri kapat"><X size={22}/></DialogClose></div><div className="category-directory">{sectionDefinitions.map(({name,icon:Icon,categories})=><div key={name}><h3><Icon size={17}/>{name}</h3>{categories.map(name=><button key={name} className={name===category?'current-category':''} onClick={()=>chooseCategory(name)}><span>{name}</span><small>{menuData.groups.find(entry=>entry.category===name)?.items.length}</small><ChevronRight size={16}/></button>)}</div>)}</div></DialogContent></Dialog>
+    <Dialog open={qrOpen} onOpenChange={setQrOpen}><DialogContent className="qr-dialog" showCloseButton={false}>
+      <DialogClose className="qr-close" aria-label="QR kodunu kapat"><X size={18}/></DialogClose>
+      <span className="qr-eyebrow">ZOI · KIRKPINAR</span>
+      <DialogTitle>Dijital menü QR kodu</DialogTitle>
+      <DialogDescription>Bu kod doğrudan güncel menü adresine bağlıdır. Fiyatlar değişse de QR kodu değişmez.</DialogDescription>
+      <div className="qr-frame"><img src="/qr/zoi-kirkpinar-menu.svg" alt="Zoi Kırkpınar dijital menü QR kodu" /></div>
+      <span className="qr-address">zoik-rkp-nar-v2gz.vercel.app</span>
+      <div className="qr-actions"><a href="/qr/zoi-kirkpinar-menu.svg" download="zoi-kirkpinar-menu-qr.svg"><Download size={16}/> QR kodunu indir</a><a href="/qr-menu.html" target="_blank" rel="noreferrer"><ArrowUpRight size={16}/> Baskı sayfası</a></div>
+    </DialogContent></Dialog>
     <Dialog open={educationOpen} onOpenChange={setEducationOpen}><DialogContent className="education-dialog hookah-builder" showCloseButton={false}>
       <DialogClose className="hookah-close" aria-label="Nargile menüsünü kapat"><X size={19}/></DialogClose>
       <div className={'education-visual '+(hookahLine==='dark'?'dark-visual':'')} style={{'--aroma':focusedAroma?.color||'#6f8980'} as CSSProperties}>
