@@ -74,39 +74,45 @@ export function menuFromCsv(csv: string): LiveMenu {
   for (const key of ['kategori_adı', 'ürün_kodu', 'ürün_adı', 'fiyat', 'durum']) {
     if (!headers.includes(key)) throw new Error(`Menü tablosunda eksik sütun: ${key}`);
   }
+  const normalize = (value: string) => value.toLocaleLowerCase('tr-TR').normalize('NFKD').replace(/[\u0300-\u036f]/g, '').replace(/ı/g, 'i').replace(/[^a-z0-9]+/g, ' ').trim();
+  const sheetRows = rows.map(row => ({ row, id: get(row, 'ürün_kodu'), key: normalize(get(row, 'ürün_adı')) }));
+  const byId = new Map(sheetRows.filter(entry => entry.id).map(entry => [entry.id, entry.row]));
+  const byName = new Map(sheetRows.filter(entry => entry.key).map(entry => [entry.key, entry.row]));
   const groups = new Map<string, LiveMenuGroup & { order: number }>();
-  for (const row of rows) {
-    const visibility = status(get(row, 'durum'));
-    if (visibility === 'gizli') continue;
-    const category = get(row, 'kategori_adı');
-    const id = get(row, 'ürün_kodu');
-    const name = get(row, 'ürün_adı');
-    if (!category || !id || !name) continue;
-    const fallbackGroup = localMenu.groups.find(group => group.category === category);
-    const fallback = fallbackGroup?.items.find(item => item.id === id);
-    if (!groups.has(category)) groups.set(category, {
-      category,
-      section: get(row, 'bölüm') || undefined,
-      order: numeric(get(row, 'kategori_sırası'), localMenu.groups.findIndex(group => group.category === category) + 1),
-      items: [],
+
+  // GoPOS-synced localMenu owns the visible inventory. Sheets enriches those
+  // products but cannot resurrect a product hidden or removed in GoPOS.
+  for (const [groupIndex, fallbackGroup] of localMenu.groups.entries()) {
+    const items: Array<LiveMenuItem & { order: number }> = [];
+    for (const [itemIndex, fallback] of fallbackGroup.items.entries()) {
+      const row = byId.get(fallback.id) || byName.get(normalize(fallback.name));
+      const visibility = row ? status(get(row, 'durum')) : 'aktif';
+      if (visibility === 'gizli') continue;
+      const stockText = row ? get(row, 'stok_adedi') : '';
+      const stock = stockText === '' ? null : numeric(stockText, 0);
+      const sheetImage = row ? safeImageUrl(get(row, 'görsel_url')) : '';
+      items.push({
+        ...fallback,
+        name: row ? get(row, 'ürün_adı') || fallback.name : fallback.name,
+        price: Number((goposSync.products as Record<string, number>)[fallback.id]) || (row ? numeric(get(row, 'fiyat'), fallback.price) : fallback.price),
+        description: row ? get(row, 'açıklama') || fallback.description : fallback.description,
+        image: sheetImage && !sheetImage.includes('img.gopos.com.tr') ? sheetImage : fallback.image || sheetImage || null,
+        soldOut: visibility === 'tükendi' || stock === 0,
+        character: row ? get(row, 'karakter') || undefined : undefined,
+        intensity: row ? Math.min(4, Math.max(1, numeric(get(row, 'yoğunluk'), 2))) : undefined,
+        pairingProductId: row ? get(row, 'önerilen_ürün_kodu') || undefined : undefined,
+        pairingNote: row ? get(row, 'öneri_notu') || undefined : undefined,
+        order: row ? numeric(get(row, 'ürün_sırası'), itemIndex + 1) : itemIndex + 1,
+      });
+    }
+    if (!items.length) continue;
+    const representative = items.map(item => byId.get(item.id) || byName.get(normalize(item.name))).find(Boolean);
+    groups.set(fallbackGroup.category, {
+      category: fallbackGroup.category,
+      section: representative ? get(representative, 'bölüm') || fallbackGroup.section : fallbackGroup.section,
+      order: representative ? numeric(get(representative, 'kategori_sırası'), groupIndex + 1) : groupIndex + 1,
+      items,
     });
-    const stockText = get(row, 'stok_adedi');
-    const stock = stockText === '' ? null : numeric(stockText, 0);
-    const sheetImage = safeImageUrl(get(row, 'görsel_url'));
-    const image = sheetImage && !sheetImage.includes('img.gopos.com.tr') ? sheetImage : fallback?.image || sheetImage || null;
-    groups.get(category)!.items.push({
-      id,
-      name,
-      price: Number((goposSync.products as Record<string, number>)[id]) || numeric(get(row, 'fiyat'), fallback?.price ?? 0),
-      description: get(row, 'açıklama') || fallback?.description || '',
-      image,
-      soldOut: visibility === 'tükendi' || stock === 0,
-      character: get(row, 'karakter') || undefined,
-      intensity: Math.min(4, Math.max(1, numeric(get(row, 'yoğunluk'), 2))),
-      pairingProductId: get(row, 'önerilen_ürün_kodu') || undefined,
-      pairingNote: get(row, 'öneri_notu') || undefined,
-      order: numeric(get(row, 'ürün_sırası'), (fallbackGroup?.items.findIndex(item => item.id === id) ?? 0) + 1),
-    } as LiveMenuItem & { order: number });
   }
   return {
     source: 'google-sheets',

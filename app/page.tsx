@@ -10,11 +10,11 @@ const HookahEducation3D = lazy(() => import('@/components/HookahEducation3D').th
 type Item = LiveMenuItem & { category: string };
 const sections = [
   { name: 'İçecekler', icon: Coffee, categories: ['Espresso Bar', 'Zoi Bar', 'Ice Bar', 'Matcha', 'Kokteyl', 'Frozen & Milkshake', 'Tea Pot', 'Soğuk İçecekler'] },
-  { name: 'Yiyecekler', icon: Utensils, categories: ['Gurme Sandviç', 'Tostlar', 'Başlangıçlar', 'Makarna Mantı'] },
+  { name: 'Yiyecekler', icon: Utensils, categories: ['Kahvaltı', 'Gurme Sandviç', 'Tostlar', 'Başlangıçlar', 'Makarna Mantı'] },
   { name: 'Tatlılar', icon: IceCreamBowl, categories: ['Tatlılar', 'Dondurma'] },
   { name: 'Diğer', icon: LayoutGrid, categories: ['Lüks Çerez', 'Şarjmatik'] },
 ];
-const notes: Record<string, string> = {'Espresso Bar':'Sıcak kahveler','Zoi Bar':'Zoi imza kahveleri','Ice Bar':'Soğuk kahveler','Matcha':'Sıcak ve soğuk matcha','Kokteyl':'Alkolsüz imza kokteyller','Frozen & Milkshake':'Frozen ve milkshake','Tea Pot':'Çay çeşitleri','Soğuk İçecekler':'Şişe ve kutu içecekler','Gurme Sandviç':'Gurme sandviçler','Tostlar':'Bazlama tostlar','Başlangıçlar':'Paylaşımlıklar','Makarna Mantı':'Ana yemekler','Tatlılar':'Günlük tatlılar','Dondurma':'Kase ve külah'};
+const notes: Record<string, string> = {'Espresso Bar':'Sıcak kahveler','Zoi Bar':'Zoi imza kahveleri','Ice Bar':'Soğuk kahveler','Matcha':'Sıcak ve soğuk matcha','Kokteyl':'Alkolsüz imza kokteyller','Frozen & Milkshake':'Frozen ve milkshake','Tea Pot':'Çay çeşitleri','Soğuk İçecekler':'Şişe ve kutu içecekler','Kahvaltı':'Güne iyi bir başlangıç','Gurme Sandviç':'Gurme sandviçler','Tostlar':'Bazlama tostlar','Başlangıçlar':'Paylaşımlıklar','Makarna Mantı':'Ana yemekler','Tatlılar':'Günlük tatlılar','Dondurma':'Kase ve külah'};
 // Hanging garland bulbs for the hero illustration: [x, y, dropLength] along the
 // sagging cable, computed once from the same quadratic curve as the SVG path
 // below (P0 25,150 · P1 220,186 · P2 415,150) so they sit exactly on the line.

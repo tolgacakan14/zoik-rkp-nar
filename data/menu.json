@@ -1,9 +1,10 @@
 {
   "source": "https://zoikirkpinar.gopos.com.tr/web-qr-menu",
-  "retrievedAt": "2026-09-10",
+  "retrievedAt": "2026-10-25T17:57:53.799Z",
   "groups": [
     {
       "category": "Espresso Bar",
+      "section": "İçecekler",
       "items": [
         {
           "name": "Espresso",
@@ -100,6 +101,7 @@
     },
     {
       "category": "Zoi Bar",
+      "section": "İçecekler",
       "items": [
         {
           "name": "Zebra Mocha",
@@ -133,6 +135,7 @@
     },
     {
       "category": "Ice Bar",
+      "section": "İçecekler",
       "items": [
         {
           "name": "Ice Latte",
@@ -182,18 +185,12 @@
           "description": "",
           "image": "/products/24.png",
           "id": "24"
-        },
-        {
-          "name": "Affogato",
-          "price": 260,
-          "description": "",
-          "image": "/products/25.png",
-          "id": "25"
         }
       ]
     },
     {
       "category": "Matcha",
+      "section": "İçecekler",
       "items": [
         {
           "name": "Matcha Latte",
@@ -213,6 +210,7 @@
     },
     {
       "category": "Kokteyl",
+      "section": "İçecekler",
       "items": [
         {
           "name": "White Purée",
@@ -273,163 +271,8 @@
       ]
     },
     {
-      "category": "Gurme Sandviç",
-      "items": [
-        {
-          "name": "Caesary",
-          "price": 470,
-          "description": "Sezar sos, hindi füme, marul, parmesan peyniri, zeytinyağı, kuru domates.",
-          "image": "/products/36-v3.webp",
-          "id": "36"
-        },
-        {
-          "name": "Olive Garden",
-          "price": 400,
-          "description": "Zeytin pate, domates, mozarella, roka, balzamik glaze sos.",
-          "image": "/products/37-v3.webp",
-          "id": "37"
-        },
-        {
-          "name": "Truffle Roast",
-          "price": 550,
-          "description": "Karabiberli roast beef, kaymak peyniri, eski kaşar, trüflü Zoi sos, roka, pesto sos.",
-          "image": "/products/38-v3.webp",
-          "id": "38"
-        },
-        {
-          "name": "Anatolia Melt",
-          "price": 550,
-          "description": "Gorgonzola, dana bacon, kuru et, otlu kaymak kreması, domates, zeytinyağı.",
-          "image": "/products/39-v3.webp",
-          "id": "39"
-        },
-        {
-          "name": "Riviera",
-          "price": 450,
-          "description": "%100 İtalyan dana salam, kaymak peyniri, taze kaşar, çeçil, rus salatası, marul, salatalık turşusu, trüflü mayonez.",
-          "image": "/products/40-v3.webp",
-          "id": "40"
-        }
-      ]
-    },
-    {
-      "category": "Tostlar",
-      "items": [
-        {
-          "name": "Bol Kaşarlı",
-          "price": 320,
-          "description": "Bazlama ekmeği, taze kaşar peyniri. Yanında patates kızartması ve turşu ile.",
-          "image": "/products/41-v3.webp",
-          "id": "41"
-        },
-        {
-          "name": "Geleneksel Sucuklu Kaşarlı",
-          "price": 360,
-          "description": "Bazlama ekmeği, sucuk, taze kaşar. Yanında patates kızartması ve turşu ile.",
-          "image": "/products/42-v3.webp",
-          "id": "42"
-        },
-        {
-          "name": "Balkan Tost",
-          "price": 390,
-          "description": "Bazlama ekmeği, balkan sos, labne peyniri, kaşar ve kasap sucuk, kuru et. Yanında patates kızartması ve turşu ile.",
-          "image": "/products/43-v3.webp",
-          "id": "43"
-        }
-      ]
-    },
-    {
-      "category": "Başlangıçlar",
-      "items": [
-        {
-          "name": "Combo Tabağı",
-          "price": 500,
-          "description": "Patates kızartması, çıtır tavuk parçaları, soğan halkası, mozarella sticks",
-          "image": "/products/44-v3.webp",
-          "id": "44"
-        },
-        {
-          "name": "Patates Kızartması",
-          "price": 300,
-          "description": "",
-          "image": "/products/45-v3.webp",
-          "id": "45"
-        },
-        {
-          "name": "Çıpçıtır Tavuk Patates",
-          "price": 440,
-          "description": "",
-          "image": "/products/46-v3.webp",
-          "id": "46"
-        }
-      ]
-    },
-    {
-      "category": "Makarna Mantı",
-      "items": [
-        {
-          "name": "Fettucini Alfredo",
-          "price": 450,
-          "description": "Alfredo sos, tavuk, mantar",
-          "image": "/products/47-v3.webp",
-          "id": "47"
-        },
-        {
-          "name": "Zoi Special Çıtır Mantı",
-          "price": 480,
-          "description": "Zoi özel ev yapımı mantı. Süzme yoğurt, kırmızı&yeşil yağ ile.",
-          "image": "/products/48-v3.webp",
-          "id": "48"
-        }
-      ]
-    },
-    {
-      "category": "Tatlılar",
-      "items": [
-        {
-          "name": "San Sebastian",
-          "price": 370,
-          "description": "",
-          "image": "/products/49-v3.webp",
-          "id": "49"
-        },
-        {
-          "name": "Tiramisu",
-          "price": 390,
-          "description": "",
-          "image": "/products/50-v3.webp",
-          "id": "50"
-        },
-        {
-          "name": "Browni",
-          "price": 390,
-          "description": "Arası beyaz çikolata üstü ise belçika çikolatası sosu ile servis edilir",
-          "image": "/products/51-v2.webp",
-          "id": "51"
-        },
-        {
-          "name": "Zoi Profiterol",
-          "price": 390,
-          "description": "",
-          "image": "/products/52-v2.webp",
-          "id": "52"
-        }
-      ]
-    },
-    {
-      "category": "Dondurma",
-      "items": [
-        {
-          "name": "Dondurma",
-          "price": 80,
-          "description": "Kase, külah veya kornet külah tercihi ile. Çeşitler için bilgi alabilirsiniz.",
-          "image": "/products/53-v3.webp",
-          "id": "53"
-        }
-      ]
-    },
-    {
       "category": "Frozen & Milkshake",
+      "section": "İçecekler",
       "items": [
         {
           "name": "Çilek Frozen",
@@ -477,6 +320,7 @@
     },
     {
       "category": "Tea Pot",
+      "section": "İçecekler",
       "items": [
         {
           "name": "Türk Çayı",
@@ -484,11 +328,28 @@
           "description": "",
           "image": "/products/60-v2.webp",
           "id": "60"
+        },
+        {
+          "name": "Sahlep",
+          "price": 250,
+          "description": "Tarçın dokunuşuyla sıcak ve kremamsı.",
+          "image": "/products/sahlep-zoi.png",
+          "id": "manual-sahlep",
+          "manual": true
+        },
+        {
+          "name": "Ihlamur",
+          "price": 250,
+          "description": "Yumuşak içimli, sıcak bitki çayı.",
+          "image": "/products/ihlamur-zoi.png",
+          "id": "manual-ihlamur",
+          "manual": true
         }
       ]
     },
     {
       "category": "Soğuk İçecekler",
+      "section": "İçecekler",
       "items": [
         {
           "name": "Soda",
@@ -591,7 +452,136 @@
       ]
     },
     {
+      "category": "Kahvaltı",
+      "section": "Yiyecekler",
+      "items": [
+        {
+          "name": "Serpme Kahvaltı",
+          "price": 500,
+          "description": "",
+          "image": "https://img.gopos.com.tr/5L13gNcyZE/921d9ea6-02e6-47d9-87f3-02da06203cb7.webp",
+          "id": "gopos-kahvalti-serpme-kahvalti"
+        },
+        {
+          "name": "Tabak Kahvaltı",
+          "price": 375,
+          "description": "",
+          "image": "https://img.gopos.com.tr/1/42d72e0c-5ee1-4a50-a0ac-487df3086b23.webp",
+          "id": "gopos-kahvalti-tabak-kahvalti"
+        }
+      ]
+    },
+    {
+      "category": "Tostlar",
+      "section": "Yiyecekler",
+      "items": [
+        {
+          "name": "Bol Kaşarlı",
+          "price": 320,
+          "description": "Bazlama ekmeği, taze kaşar peyniri. Yanında patates kızartması ve turşu ile.",
+          "image": "/products/41-v3.webp",
+          "id": "41"
+        },
+        {
+          "name": "Geleneksel Sucuklu Kaşarlı",
+          "price": 360,
+          "description": "Bazlama ekmeği, sucuk, taze kaşar. Yanında patates kızartması ve turşu ile.",
+          "image": "/products/42-v3.webp",
+          "id": "42"
+        },
+        {
+          "name": "Balkan Tost",
+          "price": 390,
+          "description": "Bazlama ekmeği, balkan sos, labne peyniri, kaşar ve kasap sucuk, kuru et. Yanında patates kızartması ve turşu ile.",
+          "image": "/products/43-v3.webp",
+          "id": "43"
+        }
+      ]
+    },
+    {
+      "category": "Başlangıçlar",
+      "section": "Yiyecekler",
+      "items": [
+        {
+          "name": "Combo Tabağı",
+          "price": 500,
+          "description": "Patates kızartması, çıtır tavuk parçaları, soğan halkası, mozarella sticks",
+          "image": "/products/44-v3.webp",
+          "id": "44"
+        },
+        {
+          "name": "Patates Kızartması",
+          "price": 300,
+          "description": "",
+          "image": "/products/45-v3.webp",
+          "id": "45"
+        },
+        {
+          "name": "Çıpçıtır Tavuk Patates",
+          "price": 440,
+          "description": "",
+          "image": "/products/46-v3.webp",
+          "id": "46"
+        }
+      ]
+    },
+    {
+      "category": "Makarna Mantı",
+      "section": "Yiyecekler",
+      "items": [
+        {
+          "name": "Fettucini Alfredo",
+          "price": 450,
+          "description": "Alfredo sos, tavuk, mantar",
+          "image": "/products/47-v3.webp",
+          "id": "47"
+        },
+        {
+          "name": "Zoi Special Çıtır Mantı",
+          "price": 480,
+          "description": "Zoi özel ev yapımı mantı. Süzme yoğurt, kırmızı&yeşil yağ ile.",
+          "image": "/products/48-v3.webp",
+          "id": "48"
+        }
+      ]
+    },
+    {
+      "category": "Tatlılar",
+      "section": "Tatlılar",
+      "items": [
+        {
+          "name": "San Sebastian",
+          "price": 370,
+          "description": "",
+          "image": "/products/49-v3.webp",
+          "id": "49"
+        },
+        {
+          "name": "Tiramisu",
+          "price": 390,
+          "description": "",
+          "image": "/products/50-v3.webp",
+          "id": "50"
+        },
+        {
+          "name": "Browni",
+          "price": 390,
+          "description": "Arası beyaz çikolata üstü ise belçika çikolatası sosu ile servis edilir",
+          "image": "/products/51-v2.webp",
+          "id": "51"
+        },
+        {
+          "name": "Zoi Profiterol",
+          "price": 390,
+          "description": "",
+          "image": "/products/52-v2.webp",
+          "id": "52"
+        }
+      ]
+    },
+    {
       "category": "Lüks Çerez",
+      "section": "Diğer",
       "items": [
         {
           "name": "Lüks Çerez",
@@ -604,6 +594,7 @@
     },
     {
       "category": "Şarjmatik",
+      "section": "Diğer",
       "items": [
         {
           "name": "Şarjmatik",

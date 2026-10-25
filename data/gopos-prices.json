@@ -1,6 +1,6 @@
 {
   "source": "https://zoikirkpinar.gopos.com.tr/web-qr-menu",
-  "syncedAt": "2026-10-23T19:01:56.124Z",
+  "syncedAt": "2026-10-25T17:57:53.800Z",
   "products": {
     "1": 160,
     "2": 200,
@@ -36,11 +36,6 @@
     "33": 300,
     "34": 300,
     "35": 300,
-    "36": 470,
-    "37": 400,
-    "38": 550,
-    "39": 550,
-    "40": 450,
     "41": 320,
     "42": 360,
     "43": 390,
@@ -75,7 +70,9 @@
     "73": 75,
     "74": 170,
     "75": 320,
-    "76": 100
+    "76": 100,
+    "gopos-kahvalti-serpme-kahvalti": 500,
+    "gopos-kahvalti-tabak-kahvalti": 375
   },
   "settings": {
     "classicPrice": 620,
