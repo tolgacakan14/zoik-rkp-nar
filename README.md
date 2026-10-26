@@ -20,6 +20,6 @@ Ana yönetim tablosu: [ZOI Kırkpınar · Menü Yönetimi](https://docs.google.c
 
 Vercel üzerindeki `/api/menu` uç noktası tabloyu okur. Tablo erişilemezse site kesintiye uğramadan `data/menu.json` ve `data/hookah.ts` içindeki doğrulanmış yerel veriye döner. Kafenin düzenleyebilmesi ve canlı eşitlemenin çalışması için Google Sheets paylaşım ayarlarından ilgili işletme hesabına düzenleyici, bağlantıya ise görüntüleyici erişimi verilmelidir.
 
-## GoPOS fiyat senkronu
+## GoPOS menü senkronu
 
-GitHub Actions her 15 dakikada bir gerçek GoPOS QR menüsünü Chromium ile açar. Ürünler adlarıyla eşleştirilir; değişen fiyatlar `data/menu.json` ve `data/gopos-prices.json` içine yazılarak otomatik commit edilir. Commit Vercel dağıtımını tetikler. GoPOS fiyatları Google Sheets fiyat alanından önceliklidir; stok, görünürlük, açıklama ve öneriler Google Sheets üzerinden yönetilmeye devam eder.
+GitHub Actions gerçek GoPOS QR menüsünü düzenli olarak Chromium ile açar. Görünür ürünler adlarıyla eşleştirilir; GoPOS'ta gizlenen veya kaldırılan ürünler yeni menüden de kalkar, yeni ürünler ve değişen fiyatlar `data/menu.json` ile `data/gopos-prices.json` içine yazılır. Yalnızca gerçek bir ürün, fiyat veya görünürlük değişikliği varsa otomatik commit oluşturulur ve Vercel yayını tetiklenir. Google Sheets açıklama, öneri ve stok bilgilerini zenginleştirir; GoPOS görünür ürün listesinin ana kaynağıdır.

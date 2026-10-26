@@ -106,9 +106,18 @@ try {
     ...(headChange !== undefined ? { headChange } : {}),
     ...(iceHose !== undefined ? { iceHose } : {}),
   };
-  await fs.writeFile(menuPath, `${JSON.stringify(menu, null, 2)}\n`);
-  await fs.writeFile(pricesPath, `${JSON.stringify({ source, syncedAt: new Date().toISOString(), products, settings }, null, 2)}\n`);
-  console.log(`GoPOS senkronu tamamlandı: ${Object.keys(products).length} görünür menü ürünü, ${rows.length} toplam satır.`);
+  const previousPrices = JSON.parse(await fs.readFile(pricesPath, 'utf8'));
+  const comparableMenu = { ...menu, retrievedAt: previousMenu.retrievedAt };
+  const unchanged = JSON.stringify(previousMenu) === JSON.stringify(comparableMenu)
+    && JSON.stringify(previousPrices.products || {}) === JSON.stringify(products)
+    && JSON.stringify(previousPrices.settings || {}) === JSON.stringify(settings);
+  if (unchanged) {
+    console.log(`GoPOS değişikliği yok: ${Object.keys(products).length} görünür ürün doğrulandı.`);
+  } else {
+    await fs.writeFile(menuPath, `${JSON.stringify(menu, null, 2)}\n`);
+    await fs.writeFile(pricesPath, `${JSON.stringify({ source, syncedAt: new Date().toISOString(), products, settings }, null, 2)}\n`);
+    console.log(`GoPOS senkronu tamamlandı: ${Object.keys(products).length} görünür menü ürünü, ${rows.length} toplam satır.`);
+  }
 } finally {
   await browser.close();
 }
