@@ -1,4 +1,4 @@
-name: GoPOS fiyat senkronu
+name: GoPOS menü senkronu
 
 on:
   workflow_dispatch:
