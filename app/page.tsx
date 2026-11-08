@@ -166,8 +166,6 @@ export default function Home() {
         (roofline, treetop, hanging garland) with the wordmark drawn in the same
         broken-ring style as the sign, and the cafe name typed on in sequence. */}
     <section className="hero" aria-label="Zoi Kırkpınar" ref={heroRef}>
-      <OliveTree side="left"/>
-      <OliveTree side="right"/>
       <svg className="hero-line-art" viewBox="0 0 440 300" fill="none" aria-hidden="true">
         <path className="la-line la-roof-ghost" pathLength={1} d="M18,152 L220,53 L422,152" />
         <path className="la-line la-roof" pathLength={1} d="M20,150 L220,55 L420,150" />
@@ -189,9 +187,14 @@ export default function Home() {
             <circle cx={x} cy={y+drop+5} r={3.4} />
           </g>
         ))}
+        {/* ZOI wordmark, drawn in the sign's broken-ring style: Z, the ring opened
+            at the top with a separate floating brow, and the dotless Turkish ı. */}
+        <path className="la-line la-mark" pathLength={1} d="M140,206 L179,206 L140,255 L181,255" />
+        <path className="la-line la-mark" pathLength={1} d="M221.84,206.25 A28,28 0 1 1 192.16,206.25" />
+        <path className="la-line la-mark la-brow" pathLength={1} d="M186,202 Q207,185 228,202" />
+        <path className="la-line la-mark" pathLength={1} d="M255,208 L255,251 Q255,260 264,256" />
       </svg>
       <div className="hero-copy">
-        <img className="hero-brandmark" src="/logo.webp" alt="Zoi" />
         <span className="hero-kicker">CAFE &amp; NARGİLE</span>
         <h1 className="hero-name" aria-label="Zoi Kırkpınar">
           {'KIRKPINAR'.split('').map((letter,index)=>(
@@ -210,10 +213,6 @@ export default function Home() {
     </button>
 
     <div className="sticky-controls">
-      <div className="menu-search-row">
-        <label className="menu-search"><Search size={17}/><input type="search" value={query} onChange={event=>setQuery(event.target.value)} placeholder="Menüde ara" aria-label="Menüde ürün ara"/>{query&&<button onClick={()=>setQuery('')} aria-label="Aramayı temizle"><X size={16}/></button>}</label>
-        <button className="menu-directory-button" onClick={()=>setCategoriesOpen(true)} aria-label="Tüm kategorileri aç"><LayoutGrid size={18}/><span>Kategoriler</span></button>
-      </div>
       <div className="section-tabs">
         <Tabs value={section} onValueChange={chooseSection}><TabsList className="section-list" aria-label="Menü bölümleri">{sectionDefinitions.map(({name,icon:Icon})=><TabsTrigger value={name} key={name} className="section-tab"><Icon size={20} strokeWidth={1.5}/><span>{name}</span></TabsTrigger>)}</TabsList></Tabs>
       </div>
