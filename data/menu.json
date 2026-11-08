@@ -1,6 +1,6 @@
 {
   "source": "https://zoikirkpinar.gopos.com.tr/web-qr-menu",
-  "retrievedAt": "2026-10-26T00:40:42.095Z",
+  "retrievedAt": "2026-11-08T15:16:17.469Z",
   "groups": [
     {
       "category": "Espresso Bar",
@@ -130,6 +130,27 @@
           "description": "",
           "image": "/products/17.png",
           "id": "17"
+        },
+        {
+          "name": "Sıcak Çikolata",
+          "price": 230,
+          "description": "",
+          "image": "https://img.gopos.com.tr/5L13gNcyZE/31a02782-ab84-4e98-9664-1ed64e15be37.webp",
+          "id": "gopos-zoi-bar-sicak-cikolata"
+        },
+        {
+          "name": "Sahlep",
+          "price": 250,
+          "description": "Tarçın dokunuşuyla sıcak ve kremamsı.",
+          "image": "/products/sahlep-zoi.png",
+          "id": "manual-sahlep"
+        },
+        {
+          "name": "Sıcak Beyaz Çikolata",
+          "price": 250,
+          "description": "",
+          "image": null,
+          "id": "gopos-zoi-bar-sicak-beyaz-cikolata"
         }
       ]
     },
@@ -330,20 +351,32 @@
           "id": "60"
         },
         {
-          "name": "Sahlep",
-          "price": 250,
-          "description": "Tarçın dokunuşuyla sıcak ve kremamsı.",
-          "image": "/products/sahlep-zoi.png",
-          "id": "manual-sahlep",
-          "manual": true
-        },
-        {
           "name": "Ihlamur",
-          "price": 250,
+          "price": 220,
           "description": "Yumuşak içimli, sıcak bitki çayı.",
           "image": "/products/ihlamur-zoi.png",
-          "id": "manual-ihlamur",
-          "manual": true
+          "id": "manual-ihlamur"
+        },
+        {
+          "name": "Kış Çayı",
+          "price": 140,
+          "description": "",
+          "image": null,
+          "id": "gopos-tea-pot-kis-cayi"
+        },
+        {
+          "name": "Ada Çayı",
+          "price": 220,
+          "description": "",
+          "image": "https://img.gopos.com.tr/1/cf5102c1-3fc0-4b0e-b93f-c370fa15a62f.webp",
+          "id": "gopos-tea-pot-ada-cayi"
+        },
+        {
+          "name": "Nane Limon",
+          "price": 220,
+          "description": "",
+          "image": null,
+          "id": "gopos-tea-pot-nane-limon"
         }
       ]
     },

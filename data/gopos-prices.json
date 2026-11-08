@@ -1,6 +1,6 @@
 {
   "source": "https://zoikirkpinar.gopos.com.tr/web-qr-menu",
-  "syncedAt": "2026-10-26T00:40:42.095Z",
+  "syncedAt": "2026-11-08T15:16:17.498Z",
   "products": {
     "1": 160,
     "2": 200,
@@ -72,7 +72,14 @@
     "75": 320,
     "76": 100,
     "gopos-kahvalti-serpme-kahvalti": 500,
-    "gopos-kahvalti-tabak-kahvalti": 375
+    "gopos-kahvalti-tabak-kahvalti": 375,
+    "gopos-zoi-bar-sicak-cikolata": 230,
+    "manual-sahlep": 250,
+    "gopos-zoi-bar-sicak-beyaz-cikolata": 250,
+    "manual-ihlamur": 220,
+    "gopos-tea-pot-kis-cayi": 140,
+    "gopos-tea-pot-ada-cayi": 220,
+    "gopos-tea-pot-nane-limon": 220
   },
   "settings": {
     "classicPrice": 620,
