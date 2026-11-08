@@ -1,6 +1,6 @@
 {
   "source": "https://zoikirkpinar.gopos.com.tr/web-qr-menu",
-  "retrievedAt": "2026-11-08T15:16:17.469Z",
+  "retrievedAt": "2026-11-08T19:53:53.209Z",
   "groups": [
     {
       "category": "Espresso Bar",
@@ -149,7 +149,7 @@
           "name": "Sıcak Beyaz Çikolata",
           "price": 250,
           "description": "",
-          "image": null,
+          "image": "https://img.gopos.com.tr/5L13gNcyZE/86804334-55d0-4da2-814f-7bb903cf2be0.webp",
           "id": "gopos-zoi-bar-sicak-beyaz-cikolata"
         }
       ]
@@ -359,9 +359,9 @@
         },
         {
           "name": "Kış Çayı",
-          "price": 140,
+          "price": 220,
           "description": "",
-          "image": null,
+          "image": "https://img.gopos.com.tr/5L13gNcyZE/78a2ded5-2e94-49f9-a1b2-f5fa7cbada3e.webp",
           "id": "gopos-tea-pot-kis-cayi"
         },
         {
@@ -375,7 +375,7 @@
           "name": "Nane Limon",
           "price": 220,
           "description": "",
-          "image": null,
+          "image": "https://img.gopos.com.tr/5L13gNcyZE/a4c4ac19-bf25-49f0-9b29-3a195ff83188.webp",
           "id": "gopos-tea-pot-nane-limon"
         }
       ]
