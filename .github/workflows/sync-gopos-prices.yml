@@ -21,10 +21,21 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version: 22
+      # `--with-deps` installs Ubuntu font packages over apt, and when the
+      # runner's apt mirrors fail DNS the whole sync dies with them even though
+      # GoPOS is reachable. The browser itself comes from Playwright's own CDN,
+      # so install that alone, prove it launches, and only fall back to apt when
+      # a system library is genuinely missing.
       - name: Playwright yükle
         run: |
           npm install --no-save --ignore-scripts playwright@1.64.0
-          npx playwright install --with-deps chromium
+          npx playwright install chromium
+          if node -e "require('playwright').chromium.launch().then(b => b.close())"; then
+            echo "Chromium sistem bağımlılıkları olmadan açıldı."
+          else
+            echo "Chromium açılmadı, sistem bağımlılıkları kuruluyor."
+            npx playwright install --with-deps chromium
+          fi
       - name: GoPOS menüsünü al
         run: node scripts/sync-gopos-prices.mjs
       - name: Değişiklik varsa yayınla
