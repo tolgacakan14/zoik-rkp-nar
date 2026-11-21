@@ -1,6 +1,6 @@
 {
   "source": "https://zoikirkpinar.gopos.com.tr/web-qr-menu",
-  "retrievedAt": "2026-11-08T19:53:53.209Z",
+  "retrievedAt": "2026-11-21T20:52:41.742Z",
   "groups": [
     {
       "category": "Espresso Bar",
@@ -609,6 +609,13 @@
           "description": "",
           "image": "/products/52-v2.webp",
           "id": "52"
+        },
+        {
+          "name": "Jülide",
+          "price": 370,
+          "description": "",
+          "image": null,
+          "id": "gopos-tatlilar-julide"
         }
       ]
     },
