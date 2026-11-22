@@ -1,6 +1,6 @@
 {
   "source": "https://zoikirkpinar.gopos.com.tr/web-qr-menu",
-  "retrievedAt": "2026-11-21T20:52:41.742Z",
+  "retrievedAt": "2026-11-22T15:08:25.597Z",
   "groups": [
     {
       "category": "Espresso Bar",
@@ -616,6 +616,13 @@
           "description": "Katman katman krema ve çikolata sosu; üzerinde gofret kırıkları, Oreo ve çilek.",
           "image": "/products/julide.webp",
           "id": "gopos-tatlilar-julide"
+        },
+        {
+          "name": "Kuruvasan",
+          "price": 360,
+          "description": "",
+          "image": "https://img.gopos.com.tr/1/b121e9be-0bcb-4044-9c05-93bd480188d4.webp",
+          "id": "gopos-tatlilar-kuruvasan"
         },
         {
           "name": "Zoi Kruvasan",
