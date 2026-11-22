@@ -63,7 +63,13 @@ try {
   if (regularRows.length < 50) throw new Error(`GoPOS görünür menü sayısı beklenenden az: ${regularRows.length}`);
 
   const previousMenu = JSON.parse(await fs.readFile(menuPath, 'utf8'));
-  const previousItems = new Map(previousMenu.groups.flatMap(group => group.items.map(item => [normalize(item.name), item])));
+  // Index a corrected product under both spellings, so it is still recognised
+  // once GoPOS is fixed and starts sending the corrected name itself.
+  const previousItems = new Map();
+  for (const group of previousMenu.groups) for (const item of group.items) {
+    previousItems.set(normalize(item.name), item);
+    if (item.nameOverride) previousItems.set(normalize(item.nameOverride), item);
+  }
   const groups = new Map();
   const products = {};
   for (const row of regularRows) {
@@ -71,15 +77,22 @@ try {
     const previous = previousItems.get(row.key);
     const id = previous?.id || `gopos-${row.category}-${slugify(row.name)}`;
     if (!groups.has(config.title)) groups.set(config.title, { category: config.title, section: config.section, order: config.order, items: [] });
+    // A correction recorded in data/menu.json outranks what GoPOS reports, so a
+    // wrong name or price in the POS does not reach the printed menu. Clear the
+    // override once GoPOS itself is fixed and the menu follows GoPOS again.
+    // `name` stays exactly as GoPOS spells it, because the next sync matches
+    // products by name; the corrected spelling travels in nameOverride.
     const item = {
       name: row.name,
-      price: row.price,
+      price: previous?.priceOverride ?? row.price,
       description: previous?.description || '',
       image: previous?.image || row.image || null,
       id,
+      ...(previous?.nameOverride === undefined ? {} : { nameOverride: previous.nameOverride }),
+      ...(previous?.priceOverride === undefined ? {} : { priceOverride: previous.priceOverride }),
     };
     groups.get(config.title).items.push(item);
-    products[id] = row.price;
+    products[id] = item.price;
   }
 
   // Venue-requested products stay visible until the same name appears in GoPOS.

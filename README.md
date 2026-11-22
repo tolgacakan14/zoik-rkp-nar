@@ -23,3 +23,14 @@ Vercel üzerindeki `/api/menu` uç noktası tabloyu okur. Tablo erişilemezse si
 ## GoPOS menü senkronu
 
 GitHub Actions gerçek GoPOS QR menüsünü düzenli olarak Chromium ile açar. Görünür ürünler adlarıyla eşleştirilir; GoPOS'ta gizlenen veya kaldırılan ürünler yeni menüden de kalkar, yeni ürünler ve değişen fiyatlar `data/menu.json` ile `data/gopos-prices.json` içine yazılır. Yalnızca gerçek bir ürün, fiyat veya görünürlük değişikliği varsa otomatik commit oluşturulur ve Vercel yayını tetiklenir. Google Sheets açıklama, öneri ve stok bilgilerini zenginleştirir; GoPOS görünür ürün listesinin ana kaynağıdır.
+
+### GoPOS'taki bir hatayı menüde düzeltmek
+
+GoPOS'ta yanlış yazılmış bir ad veya yanlış girilmiş bir fiyat, `data/menu.json` içindeki ürüne iki alan eklenerek menü tarafında düzeltilebilir:
+
+- `nameOverride`: ekranda görünecek doğru ad. Ürünün `name` alanı GoPOS'taki yazımla kalmalı, senkron ürünleri ada göre eşleştiriyor.
+- `priceOverride`: ekranda görünecek doğru fiyat.
+
+Senkron bu alanları her çalışmada korur, yani GoPOS yanlışı göndermeye devam etse bile menü doğruyu gösterir. GoPOS düzeltildiğinde alanları silmek gerekir, yoksa menü GoPOS'u izlemeye dönmez.
+
+Bu bir yama; kasa hâlâ GoPOS'taki değeri keser. Fiyat düzeltmesi kullanıldığında menü ile adisyon farklı tutar gösterir, o yüzden asıl kaydın da düzeltilmesi gerekir.

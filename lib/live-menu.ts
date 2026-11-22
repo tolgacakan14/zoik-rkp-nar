@@ -8,6 +8,10 @@ export type LiveMenuItem = {
   price: number;
   description: string;
   image: string | null;
+  /** Corrects a name GoPOS spells wrong; menu.json keeps the GoPOS spelling so the sync can still match the product. */
+  nameOverride?: string;
+  /** Corrects a price GoPOS has wrong, until the POS record itself is fixed. */
+  priceOverride?: number;
   soldOut?: boolean;
   character?: string;
   intensity?: number;
@@ -26,7 +30,25 @@ export type LiveSettings = {
 };
 
 export const defaultSettings: LiveSettings = { classicPrice: 580, darkPrice: 650, headChange: 450, iceHose: 75, maxAromas: 2 };
-export const localMenu = fallbackMenu as LiveMenu;
+const syncedMenu = fallbackMenu as LiveMenu;
+
+/**
+ * The GoPOS-synced menu with corrections applied, used both as the offline
+ * fallback and as the base Sheets enriches. Products keep the GoPOS spelling in
+ * data/menu.json so the sync can match them, so the correction has to be
+ * applied here rather than read straight off the file.
+ */
+export const localMenu: LiveMenu = {
+  ...syncedMenu,
+  groups: syncedMenu.groups.map(group => ({
+    ...group,
+    items: group.items.map(item => ({
+      ...item,
+      name: item.nameOverride || item.name,
+      price: item.priceOverride ?? item.price,
+    })),
+  })),
+};
 
 function parseCsv(text: string) {
   const rows: string[][] = [];
@@ -93,7 +115,7 @@ export function menuFromCsv(csv: string): LiveMenu {
       const sheetImage = row ? safeImageUrl(get(row, 'görsel_url')) : '';
       items.push({
         ...fallback,
-        name: row ? get(row, 'ürün_adı') || fallback.name : fallback.name,
+        name: fallback.nameOverride || (row ? get(row, 'ürün_adı') || fallback.name : fallback.name),
         price: Number((goposSync.products as Record<string, number>)[fallback.id]) || (row ? numeric(get(row, 'fiyat'), fallback.price) : fallback.price),
         description: row ? get(row, 'açıklama') || fallback.description : fallback.description,
         image: sheetImage && !sheetImage.includes('img.gopos.com.tr') ? sheetImage : fallback.image || sheetImage || null,
