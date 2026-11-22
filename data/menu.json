@@ -620,17 +620,9 @@
         {
           "name": "Kuruvasan",
           "price": 360,
-          "description": "",
-          "image": "https://img.gopos.com.tr/1/b121e9be-0bcb-4044-9c05-93bd480188d4.webp",
-          "id": "gopos-tatlilar-kuruvasan"
-        },
-        {
-          "name": "Zoi Kruvasan",
-          "price": 360,
           "description": "Tereyağlı kruvasanın arası krema, çilek ve muz; üzerine çikolata sosu ve gofret kırıkları.",
           "image": "/products/zoi-kruvasan.webp",
-          "id": "manual-zoi-kruvasan",
-          "manual": true
+          "id": "gopos-tatlilar-kuruvasan"
         }
       ]
     },
