@@ -613,9 +613,17 @@
         {
           "name": "Jülide",
           "price": 370,
-          "description": "",
-          "image": null,
+          "description": "Katman katman krema ve çikolata sosu; üzerinde gofret kırıkları, Oreo ve çilek.",
+          "image": "/products/julide.webp",
           "id": "gopos-tatlilar-julide"
+        },
+        {
+          "name": "Zoi Kruvasan",
+          "price": 360,
+          "description": "Tereyağlı kruvasanın arası krema, çilek ve muz; üzerine çikolata sosu ve gofret kırıkları.",
+          "image": "/products/zoi-kruvasan.webp",
+          "id": "manual-zoi-kruvasan",
+          "manual": true
         }
       ]
     },
