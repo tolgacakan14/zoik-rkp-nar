@@ -1,6 +1,6 @@
 {
   "source": "https://zoikirkpinar.gopos.com.tr/web-qr-menu",
-  "retrievedAt": "2026-11-22T15:08:25.597Z",
+  "retrievedAt": "2026-11-22T21:57:48.987Z",
   "groups": [
     {
       "category": "Espresso Bar",
@@ -619,7 +619,7 @@
           "priceOverride": 360
         },
         {
-          "name": "Kuruvasan",
+          "name": "Kruvasan",
           "price": 360,
           "description": "Tereyağlı kruvasanın arası krema, çilek ve muz; üzerine çikolata sosu ve gofret kırıkları.",
           "image": "/products/zoi-kruvasan.webp",
